@@ -1,0 +1,22 @@
+{
+  "name": "velaan-farm-portal",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "install:backend": "npm install --prefix backend",
+    "install:frontend": "npm install --prefix frontend",
+    "install:admin": "npm install --prefix admin",
+    "install:all": "npm run install:backend && npm run install:frontend && npm run install:admin",
+    "dev:backend": "node backend/server.js",
+    "dev:frontend": "npm run dev --prefix frontend",
+    "dev:admin": "npm run dev --prefix admin",
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\" \"npm run dev:admin\"",
+    "build:frontend": "npm run build --prefix frontend",
+    "build:admin": "npm run build --prefix admin",
+    "build": "npm run build:frontend && npm run build:admin",
+    "start": "node backend/server.js"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
