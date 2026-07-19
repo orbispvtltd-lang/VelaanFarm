@@ -1394,7 +1394,7 @@ const App = () => {
   return (
     <AuthContext.Provider value={authContextValue}>
       <CartContext.Provider value={cartContextValue}>
-        <BrowserRouter basename="/shop">
+        <BrowserRouter>
 
           {/* ===== ENTRY SPLASH SCREEN ===== */}
           {entrySplash && (

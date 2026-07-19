@@ -389,7 +389,7 @@ const App = () => {
 
   return (
     <AuthContext.Provider value={authContextValue}>
-      <BrowserRouter basename="/admin">
+      <BrowserRouter>
         <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
 
           {/* Header/Navbar */}
