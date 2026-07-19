@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useContext, createContext, useReducer, useMemo } from 'react';
 import { BrowserRouter, Routes, Route, Link, useNavigate, useParams, Navigate, useLocation } from 'react-router-dom';
 import { ref, push, get, child, set } from 'firebase/database';
-import { database } from './firebase';
+import { database, auth } from './firebase';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
 
 // ---------- IMAGE PATHS WITH BASE URL ----------
 const LOGO_URL = `${import.meta.env.BASE_URL || '/shop/'}image2.jpeg`;
@@ -1151,6 +1152,44 @@ const Contact = () => {
 };
 
 
+// 8.5 FORGOT PASSWORD
+const ForgotPassword = () => {
+  const [email, setEmail] = useState('');
+  
+  const handleReset = async (e) => {
+    e.preventDefault();
+    if (email) {
+      try {
+        await sendPasswordResetEmail(auth, email);
+        alert('கடவுச்சொல்லை மீட்டமைப்பதற்கான இணைப்பு உங்கள் மின்னஞ்சலுக்கு அனுப்பப்பட்டுள்ளது! (Password reset link sent to your email!)');
+      } catch (err) {
+        console.error(err);
+        alert('பிழை ஏற்பட்டது. மின்னஞ்சலை சரிபார்க்கவும்.');
+      }
+    }
+  };
+
+  return (
+    <section style={{ paddingTop: '140px', minHeight: '80vh' }}>
+      <div className="form-card">
+        <h2 className="form-title">கடவுச்சொல் மீட்பு (Forgot Password)</h2>
+        <form onSubmit={handleReset}>
+          <div className="form-group">
+            <label>மின்னஞ்சல் (Email)</label>
+            <input type="email" placeholder="example@gmail.com" value={email} onChange={e => setEmail(e.target.value)} required />
+          </div>
+          <button type="submit" className="btn btn-primary w-100" style={{ padding: '12px', marginTop: '10px' }}>
+            இணைப்பை அனுப்பு (Send Link)
+          </button>
+        </form>
+        <p style={{ marginTop: '20px', textAlign: 'center', fontSize: '0.9rem', color: 'var(--text-light)' }}>
+          <Link to="/login" style={{ color: 'var(--primary-color)', fontWeight: '600', textDecoration: 'none' }}>உள்நுழைக (Back to Login)</Link>
+        </p>
+      </div>
+    </section>
+  );
+};
+
 // 9. AUTHENTICATION (LOGIN / SIGNUP)
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -1165,24 +1204,15 @@ const Login = () => {
     e.preventDefault();
     if (email && pass) {
       try {
-        const usersRef = ref(database, 'users');
-        const snapshot = await get(usersRef);
-        let foundUser = null;
-
+        const userCredential = await signInWithEmailAndPassword(auth, email, pass);
+        const user = userCredential.user;
+        
+        // Fetch user role/name from Realtime DB
+        const userRef = ref(database, 'users/' + user.uid);
+        const snapshot = await get(userRef);
+        let foundUser = { id: user.uid, name: email.split('@')[0], email: user.email, role: 'user' };
         if (snapshot.exists()) {
-          const usersObj = snapshot.val();
-          for (let id in usersObj) {
-            const u = usersObj[id];
-            if (u.email === email && u.password === pass) {
-              foundUser = { id, name: u.name, email: u.email, role: u.role || 'user' };
-              break;
-            }
-          }
-        }
-
-        if (!foundUser) {
-          alert('மின்னஞ்சல் அல்லது கடவுச்சொல் தவறானது! (Invalid email or password)');
-          return;
+          foundUser = { id: user.uid, ...snapshot.val() };
         }
 
         setShowSplash(true);
@@ -1197,13 +1227,13 @@ const Login = () => {
         }, 1000);
 
         setTimeout(() => {
-          dispatch({ type: 'LOGIN', payload: { user: foundUser, token: 'firebase-token' } });
+          dispatch({ type: 'LOGIN', payload: { user: foundUser, token: user.accessToken } });
           const from = location.state?.from?.pathname || '/';
           navigate(from, { replace: true });
         }, 5000);
       } catch (err) {
         console.error('Login error:', err);
-        alert('உள்நுழைவதில் பிழை ஏற்பட்டது.');
+        alert('மின்னஞ்சல் அல்லது கடவுச்சொல் தவறானது! (Invalid email or password)');
       }
     } else {
       alert('மின்னஞ்சல் மற்றும் கடவுச்சொல்லை உள்ளிடவும்.');
@@ -1238,7 +1268,10 @@ const Login = () => {
             உள்நுழைக (Login)
           </button>
         </form>
-        <p style={{ marginTop: '20px', textAlign: 'center', fontSize: '0.9rem', color: 'var(--text-light)' }}>
+        <p style={{ marginTop: '15px', textAlign: 'center', fontSize: '0.9rem' }}>
+          <Link to="/forgot-password" style={{ color: 'var(--text-light)', textDecoration: 'none' }}>கடவுச்சொல்லை மறந்துவிட்டீர்களா? (Forgot Password?)</Link>
+        </p>
+        <p style={{ marginTop: '10px', textAlign: 'center', fontSize: '0.9rem', color: 'var(--text-light)' }}>
           புதிய வாடிக்கையாளரா? <Link to="/signup" style={{ color: 'var(--primary-color)', fontWeight: '600', textDecoration: 'none' }}>பதிவு செய்க (Sign up)</Link>
         </p>
       </div>
@@ -1258,33 +1291,17 @@ const Signup = () => {
     e.preventDefault();
     if (email && pass) {
       try {
-        const usersRef = ref(database, 'users');
-        const snapshot = await get(usersRef);
-        let exists = false;
+        const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
+        const user = userCredential.user;
 
-        if (snapshot.exists()) {
-          const usersObj = snapshot.val();
-          for (let id in usersObj) {
-            if (usersObj[id].email === email) {
-              exists = true;
-              break;
-            }
-          }
-        }
-
-        if (exists) {
-          alert('இந்த மின்னஞ்சலில் ஏற்கனவே கணக்கு உள்ளது!');
-          return;
-        }
-
-        const newUserRef = await push(usersRef, {
+        const newUserRef = ref(database, 'users/' + user.uid);
+        await set(newUserRef, {
           name: email.split('@')[0],
           email: email,
-          password: pass,
           role: 'user'
         });
 
-        const newUser = { id: newUserRef.key, name: email.split('@')[0], email, role: 'user' };
+        const newUser = { id: user.uid, name: email.split('@')[0], email, role: 'user' };
 
         setShowSplash(true);
 
@@ -1298,12 +1315,16 @@ const Signup = () => {
         }, 1000);
 
         setTimeout(() => {
-          dispatch({ type: 'LOGIN', payload: { user: newUser, token: 'firebase-token' } });
+          dispatch({ type: 'LOGIN', payload: { user: newUser, token: user.accessToken } });
           navigate('/');
         }, 5000);
       } catch (err) {
         console.error('Signup error:', err);
-        alert('கணக்கு உருவாக்குவதில் பிழை ஏற்பட்டது.');
+        if (err.code === 'auth/email-already-in-use') {
+           alert('இந்த மின்னஞ்சலில் ஏற்கனவே கணக்கு உள்ளது!');
+        } else {
+           alert('கணக்கு உருவாக்குவதில் பிழை ஏற்பட்டது. (கடவுச்சொல் குறைந்தது 6 எழுத்துகள் இருக்க வேண்டும்)');
+        }
       }
     } else {
       alert('விவரங்களை முழுமையாக உள்ளிடவும்.');
@@ -1497,6 +1518,7 @@ const App = () => {
 
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
                 {/* Fallback to Home */}
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
