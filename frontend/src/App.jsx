@@ -16,6 +16,7 @@ const GHEE_IMG = `${import.meta.env.BASE_URL || '/shop/'}ghee.png`;
 // ---------- CONTEXTS ----------
 const CartContext = createContext();
 const AuthContext = createContext();
+const ToastContext = createContext();
 
 // ---------- SAMPLE DATA ----------
 const PRODUCTS = [
@@ -421,7 +422,7 @@ const About = () => {
 
 // 3. PRODUCTS PAGE
 const Products = () => {
-  const { dispatch } = useContext(CartContext);
+  const { dispatch, showToast } = useContext(CartContext);
   const [searchTerm, setSearchTerm] = useState('');
   const [category, setCategory] = useState('all');
   const [productsList, setProductsList] = useState([]);
@@ -543,7 +544,7 @@ const Products = () => {
                   <button
                     onClick={() => {
                       dispatch({ type: 'ADD', payload: p });
-                      alert(`✅ ${p.name} (${p.variant}) கூடையில் சேர்க்கப்பட்டது!`);
+                      showToast(p.name, p.variant);
                     }}
                     className="btn btn-primary"
                     style={{ padding: '10px 20px', fontSize: '0.9rem' }}
@@ -1382,6 +1383,19 @@ const App = () => {
   const [auth, authDispatch] = useReducer(authReducer, initialAuth);
   const [menuActive, setMenuActive] = useState(false);
 
+  // --- Toast notification state ---
+  const [toast, setToast] = useState({ visible: false, name: '', variant: '', exiting: false });
+  const toastTimerRef = React.useRef(null);
+
+  const showToast = React.useCallback((name, variant) => {
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+    setToast({ visible: true, name, variant, exiting: false });
+    toastTimerRef.current = setTimeout(() => {
+      setToast(prev => ({ ...prev, exiting: true }));
+      setTimeout(() => setToast({ visible: false, name: '', variant: '', exiting: false }), 400);
+    }, 3100);
+  }, []);
+
   // --- Entry Splash ---
   const [entrySplash, setEntrySplash] = useState(true);
   const [entryProgress, setEntryProgress] = useState(0);
@@ -1411,7 +1425,7 @@ const App = () => {
     localStorage.setItem('velaan_cart', JSON.stringify(cart));
   }, [cart]);
 
-  const cartContextValue = useMemo(() => ({ state: cart, dispatch: cartDispatch }), [cart]);
+  const cartContextValue = useMemo(() => ({ state: cart, dispatch: cartDispatch, showToast }), [cart, showToast]);
   const authContextValue = useMemo(() => ({ state: auth, dispatch: authDispatch }), [auth]);
 
   const closeMenu = () => setMenuActive(false);
@@ -1419,6 +1433,7 @@ const App = () => {
   return (
     <AuthContext.Provider value={authContextValue}>
       <CartContext.Provider value={cartContextValue}>
+        <ToastContext.Provider value={showToast}>
         <BrowserRouter>
 
           {/* ===== ENTRY SPLASH SCREEN ===== */}
@@ -1544,8 +1559,22 @@ const App = () => {
               </div>
             </footer>
 
+            {/* ===== ADD-TO-CART TOAST NOTIFICATION ===== */}
+            {toast.visible && (
+              <div className={`cart-toast${toast.exiting ? ' cart-toast--exit' : ''}`}>
+                <span className="cart-toast__icon"><i className="fas fa-check-circle"></i></span>
+                <span className="cart-toast__msg">
+                  <strong>{toast.name}</strong> ({toast.variant}) கூடையில் சேர்க்கப்பட்டது!
+                </span>
+                <Link to="/cart" className="cart-toast__link">
+                  <i className="fas fa-shopping-cart"></i> கூடையை பார்க்க (View Cart)
+                </Link>
+              </div>
+            )}
+
           </div>
         </BrowserRouter>
+        </ToastContext.Provider>
       </CartContext.Provider>
     </AuthContext.Provider>
   );

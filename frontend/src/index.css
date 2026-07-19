@@ -1455,6 +1455,91 @@ footer {
     color: var(--text-light);
 }
 
+/* ===== Cart Toast Notification ===== */
+.cart-toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(0);
+    z-index: 9990;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #fff;
+    border-left: 5px solid var(--primary-light);
+    border-radius: 14px;
+    padding: 14px 22px;
+    box-shadow: 0 8px 32px rgba(30, 94, 58, 0.18), 0 2px 8px rgba(0,0,0,0.07);
+    min-width: 280px;
+    max-width: 90vw;
+    animation: toast-slide-in 0.38s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+}
+
+.cart-toast--exit {
+    animation: toast-slide-out 0.36s ease-in both;
+}
+
+@keyframes toast-slide-in {
+    from { opacity: 0; transform: translateX(-50%) translateY(40px) scale(0.95); }
+    to   { opacity: 1; transform: translateX(-50%) translateY(0)    scale(1);    }
+}
+
+@keyframes toast-slide-out {
+    from { opacity: 1; transform: translateX(-50%) translateY(0)    scale(1);    }
+    to   { opacity: 0; transform: translateX(-50%) translateY(30px)  scale(0.95); }
+}
+
+.cart-toast__icon {
+    font-size: 1.4rem;
+    color: var(--primary-light);
+    flex-shrink: 0;
+}
+
+.cart-toast__msg {
+    font-size: 0.92rem;
+    color: var(--text-color);
+    flex-grow: 1;
+    line-height: 1.4;
+}
+
+.cart-toast__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: white;
+    background: linear-gradient(135deg, var(--primary-light), var(--primary-color));
+    padding: 8px 16px;
+    border-radius: 50px;
+    text-decoration: none;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: var(--transition);
+    box-shadow: 0 3px 10px rgba(30, 94, 58, 0.2);
+}
+
+.cart-toast__link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(30, 94, 58, 0.3);
+}
+
+@media (max-width: 480px) {
+    .cart-toast {
+        bottom: 16px;
+        padding: 12px 14px;
+        gap: 8px;
+        flex-wrap: wrap;
+        justify-content: center;
+        text-align: center;
+    }
+    .cart-toast__link {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+
 /* ===== Extra-small screens (phones < 480px) ===== */
 @media (max-width: 480px) {
     section {
