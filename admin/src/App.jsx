@@ -314,7 +314,7 @@ const Login = () => {
     e.preventDefault();
     if (email && pass) {
       try {
-        if (email === 'orbis.hitech@gmail.com' && pass === 'orbis03') {
+        if (email === 'admin@gmail.com' && pass === 'admin@123') {
           setShowSplash(true);
 
           let currentProgress = 0;
@@ -330,7 +330,7 @@ const Login = () => {
             dispatch({ 
               type: 'LOGIN', 
               payload: { 
-                user: { id: 1, name: 'orbis', email: 'orbis.hitech@gmail.com', role: 'admin' }, 
+                user: { id: 1, name: 'Admin', email: 'admin@gmail.com', role: 'admin' }, 
                 token: 'firebase-bypassed-token' 
               } 
             });
