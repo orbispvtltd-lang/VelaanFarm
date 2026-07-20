@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext, createContext, useReducer, useMemo } from 'react';
-import { BrowserRouter, Routes, Route, Link, useNavigate, useParams, Navigate, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Link, NavLink, useNavigate, useParams, Navigate, useLocation } from 'react-router-dom';
 import { ref, push, get, child, set } from 'firebase/database';
 import { database, auth } from './firebase';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
@@ -1678,13 +1678,13 @@ const App = () => {
                 </Link>
 
                 <ul className={`nav-links ${menuActive ? 'active' : ''}`}>
-                  <li><Link to="/" onClick={closeMenu}>முகப்பு (Home)</Link></li>
-                  <li><Link to="/about" onClick={closeMenu}>பற்றி (About)</Link></li>
-                  <li><Link to="/products" onClick={closeMenu}>தயாரிப்புகள் (Products)</Link></li>
-                  <li><Link to="/delivery" onClick={closeMenu}>விநியோகம் (Delivery)</Link></li>
-                  <li><Link to="/contact" onClick={closeMenu}>தொடர்புக்கு (Contact)</Link></li>
+                  <li><NavLink to="/" onClick={closeMenu} className={({isActive}) => isActive ? 'active-nav' : ''}>முகப்பு (Home)</NavLink></li>
+                  <li><NavLink to="/about" onClick={closeMenu} className={({isActive}) => isActive ? 'active-nav' : ''}>பற்றி (About)</NavLink></li>
+                  <li><NavLink to="/products" onClick={closeMenu} className={({isActive}) => isActive ? 'active-nav' : ''}>தயாரிப்புகள் (Products)</NavLink></li>
+                  <li><NavLink to="/delivery" onClick={closeMenu} className={({isActive}) => isActive ? 'active-nav' : ''}>விநியோகம் (Delivery)</NavLink></li>
+                  <li><NavLink to="/contact" onClick={closeMenu} className={({isActive}) => isActive ? 'active-nav' : ''}>தொடர்புக்கு (Contact)</NavLink></li>
                   {auth.user && (
-                    <li><Link to="/my-orders" onClick={closeMenu}>என் ஆர்டர்கள் (MyOrders)</Link></li>
+                    <li><NavLink to="/my-orders" onClick={closeMenu} className={({isActive}) => isActive ? 'active-nav' : ''}>என் ஆர்டர்கள் (MyOrders)</NavLink></li>
                   )}
 
 

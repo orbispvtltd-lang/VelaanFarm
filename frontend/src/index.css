@@ -1661,6 +1661,9 @@ footer {
     .about-content h2,
     .benefits-header h2,
     .contact-info-panel h2 {
-        font-size: 1.8rem;
+        font-size: 1.5rem;
+        overflow-wrap: break-word;
+        word-break: break-word;
+        hyphens: auto;
     }
 }
