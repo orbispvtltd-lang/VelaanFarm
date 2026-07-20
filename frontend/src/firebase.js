@@ -3,7 +3,7 @@ import { getDatabase } from "firebase/database";
 import { getAuth } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCUBymUxDZfEVx_YVKkkCuZC6fGZO7s3fc",
+  apiKey: FIRE_BASE_API,
   authDomain: "velaanmilk.firebaseapp.com",
   databaseURL: "https://velaanmilk-default-rtdb.firebaseio.com",
   projectId: "velaanmilk",
