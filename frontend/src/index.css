@@ -1231,8 +1231,10 @@ footer {
     align-items: center;
     gap: 15px;
 }
-.cart-item-icon {
-    font-size: 2rem;
+.cart-item-img {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
 }
 .cart-item-info h4 {
     color: var(--primary-dark);
