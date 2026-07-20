@@ -777,7 +777,7 @@ const Order = () => {
           currency: data.currency,
           name: "Velaan Farm",
           description: "Purchase Order",
-          order_id: data.order_id,
+          order_id: data.id,
           handler: async function (response) {
             // Verify payment
             const verifyRes = await fetch(`${apiUrl}/razorpay/verify-payment`, {
