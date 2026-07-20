@@ -677,6 +677,7 @@ const Order = () => {
   const shipping = (subtotal === 0 || subtotal >= 500 || !hasGhee) ? 0 : 50;
   const total = subtotal + shipping;
 
+  const [paymentMethod, setPaymentMethod] = useState('online');
   const [form, setForm] = useState({
     name: auth.user ? auth.user.name : '',
     phone: '',
@@ -737,20 +738,93 @@ const Order = () => {
       total: total,
       date: dateStr,
       timestamp: Date.now(),
-      status: 'விநியோகத்தில் (Pending)'
+      status: 'விநியோகத்தில் (Pending)',
+      payment_method: paymentMethod
     };
 
-    try {
-      const ordersRef = ref(database, 'orders');
-      await push(ordersRef, orderData);
+    if (paymentMethod === 'cod') {
+      try {
+        const ordersRef = ref(database, 'orders');
+        await push(ordersRef, orderData);
 
-      // Clear cart and redirect
-      cartDispatch({ type: 'CLEAR' });
-      alert('✅ ஆர்டர் வெற்றிகரமாக சமர்ப்பிக்கப்பட்டது! எங்களது விநியோகம் தினமும் நடைபெறும். நன்றி!');
-      navigate('/');
-    } catch (err) {
-      console.error('Submit order error:', err);
-      alert('ஆர்டர் சமர்ப்பிப்பதில் பிழை ஏற்பட்டது.');
+        // Clear cart and redirect
+        cartDispatch({ type: 'CLEAR' });
+        alert('✅ ஆர்டர் வெற்றிகரமாக சமர்ப்பிக்கப்பட்டது! எங்களது விநியோகம் தினமும் நடைபெறும். நன்றி!');
+        navigate('/');
+      } catch (err) {
+        console.error('Submit order error:', err);
+        alert('ஆர்டர் சமர்ப்பிப்பதில் பிழை ஏற்பட்டது.');
+      }
+    } else {
+      // Online Payment via Razorpay
+      try {
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+        
+        // 1. Create order on backend
+        const res = await fetch(`${apiUrl}/razorpay/create-order`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ amount: total * 100 })
+        });
+        
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message || 'Failed to create order');
+        
+        // 2. Open Razorpay Checkout
+        const options = {
+          key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+          amount: data.amount,
+          currency: data.currency,
+          name: "Velaan Farm",
+          description: "Purchase Order",
+          order_id: data.order_id,
+          handler: async function (response) {
+            // Verify payment
+            const verifyRes = await fetch(`${apiUrl}/razorpay/verify-payment`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_signature: response.razorpay_signature
+              })
+            });
+            const verifyData = await verifyRes.json();
+            
+            if (verifyData.success) {
+              // Add to Firebase
+              orderData.payment_id = response.razorpay_payment_id;
+              orderData.status = 'பணம் செலுத்தப்பட்டது (Paid)';
+              const ordersRef = ref(database, 'orders');
+              await push(ordersRef, orderData);
+              
+              cartDispatch({ type: 'CLEAR' });
+              alert('✅ பணம் வெற்றிகரமாக செலுத்தப்பட்டது! ஆர்டர் உறுதியானது.');
+              navigate('/');
+            } else {
+              alert('Payment Verification Failed!');
+            }
+          },
+          prefill: {
+            name: form.name,
+            email: form.email,
+            contact: form.phone
+          },
+          theme: {
+            color: "#2b5e2b"
+          }
+        };
+        
+        const rzp = new window.Razorpay(options);
+        rzp.on('payment.failed', function (response){
+           alert("Payment Failed: " + response.error.description);
+        });
+        rzp.open();
+        
+      } catch (err) {
+        console.error('Payment Error:', err);
+        alert('ஆன்லைன் பேமெண்ட் தொடங்குவதில் பிழை ஏற்பட்டது: ' + err.message);
+      }
     }
   };
 
@@ -808,6 +882,32 @@ const Order = () => {
               <div className="form-group">
                 <label>குறிப்புகள் (Delivery Notes)</label>
                 <textarea name="notes" value={form.notes} onChange={handleChange} rows="3" placeholder="ஏதேனும் கூடுதல் தகவல்கள்..."></textarea>
+              </div>
+
+              <div className="form-group" style={{ marginBottom: '25px' }}>
+                <label style={{ display: 'block', marginBottom: '10px' }}>பணம் செலுத்தும் முறை (Payment Method)</label>
+                <div style={{ display: 'flex', gap: '20px' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                    <input 
+                      type="radio" 
+                      name="payment" 
+                      value="online" 
+                      checked={paymentMethod === 'online'} 
+                      onChange={(e) => setPaymentMethod(e.target.value)} 
+                    />
+                    <span>ஆன்லைன் பேமெண்ட் (Online)</span>
+                  </label>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
+                    <input 
+                      type="radio" 
+                      name="payment" 
+                      value="cod" 
+                      checked={paymentMethod === 'cod'} 
+                      onChange={(e) => setPaymentMethod(e.target.value)} 
+                    />
+                    <span>கேஷ் ஆன் டெலிவரி (COD)</span>
+                  </label>
+                </div>
               </div>
 
               <button type="submit" className="btn btn-primary w-100" style={{ padding: '14px', marginTop: '10px' }}>
