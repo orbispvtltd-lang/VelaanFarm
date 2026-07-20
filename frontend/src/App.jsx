@@ -749,8 +749,7 @@ const Order = () => {
 
         // Clear cart and redirect
         cartDispatch({ type: 'CLEAR' });
-        alert('✅ ஆர்டர் வெற்றிகரமாக சமர்ப்பிக்கப்பட்டது! எங்களது விநியோகம் தினமும் நடைபெறும். நன்றி!');
-        navigate('/');
+        navigate('/order-success');
       } catch (err) {
         console.error('Submit order error:', err);
         alert('ஆர்டர் சமர்ப்பிப்பதில் பிழை ஏற்பட்டது.');
@@ -799,8 +798,7 @@ const Order = () => {
               await push(ordersRef, orderData);
               
               cartDispatch({ type: 'CLEAR' });
-              alert('✅ பணம் வெற்றிகரமாக செலுத்தப்பட்டது! ஆர்டர் உறுதியானது.');
-              navigate('/');
+              navigate('/order-success');
             } else {
               alert('Payment Verification Failed!');
             }
