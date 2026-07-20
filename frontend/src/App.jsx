@@ -1406,6 +1406,57 @@ const ForgotPassword = () => {
   );
 };
 
+// 8.6 ORDER SUCCESS PAGE
+const OrderSuccess = () => {
+  return (
+    <section style={{ paddingTop: 'clamp(90px, 12vw, 140px)', minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div className="form-card" style={{ textAlign: 'center', maxWidth: '500px', width: '100%', padding: '40px 20px', margin: '0 auto' }}>
+        <div style={{
+          width: '80px', height: '80px', borderRadius: '50%',
+          background: 'linear-gradient(135deg, var(--primary-light), var(--primary-color))',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          margin: '0 auto 24px auto',
+          boxShadow: '0 8px 24px rgba(30, 94, 58, 0.25)',
+          animation: 'pulse 2s infinite'
+        }}>
+          <i className="fas fa-check" style={{ fontSize: '2.5rem', color: 'white' }}></i>
+        </div>
+        
+        <h2 style={{ fontSize: '1.6rem', color: 'var(--primary-dark)', marginBottom: '8px', fontWeight: '700' }}>
+          ஆர்டர் வெற்றிகரமாக பதிவு செய்யப்பட்டது!
+        </h2>
+        <h3 style={{ fontSize: '1.2rem', color: 'var(--text-color)', marginBottom: '16px' }}>
+          Order Placed Successfully!
+        </h3>
+        
+        <p style={{ color: 'var(--text-light)', fontSize: '1rem', marginBottom: '24px', lineHeight: '1.6' }}>
+          எங்கள் வேளாண் பண்ணையில் வாங்கியமைக்கு மிக்க நன்றி. உங்கள் ஆர்டர் விரைவில் விநியோகிக்கப்படும்.
+          <br /><br />
+          (Thank you for shopping with Velaan Farm. Your order will be delivered soon.)
+        </p>
+
+        <div style={{
+          background: 'rgba(45, 138, 86, 0.1)', border: '1px solid rgba(45, 138, 86, 0.2)',
+          borderRadius: '10px', padding: '15px', marginBottom: '30px',
+          fontSize: '0.95rem', color: 'var(--primary-dark)'
+        }}>
+          <i className="fas fa-headset"></i> ஏதேனும் சந்தேகங்களுக்கு தொடர்பு கொள்ளவும்: 
+          <br/><strong>7092782855</strong>
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          <Link to="/my-orders" className="btn btn-primary w-100" style={{ padding: '14px' }}>
+            <i className="fas fa-box-open"></i> என் ஆர்டர்கள் (View My Orders)
+          </Link>
+          <Link to="/products" className="btn btn-secondary w-100" style={{ padding: '14px' }}>
+            <i className="fas fa-shopping-bag"></i> தொடர்ந்து வாங்க (Continue Shopping)
+          </Link>
+        </div>
+      </div>
+    </section>
+  );
+};
+
 
 // 9. AUTHENTICATION (LOGIN / SIGNUP)
 const Login = () => {
@@ -1743,6 +1794,7 @@ const App = () => {
                 <Route path="/products" element={<Products />} />
                 <Route path="/cart" element={<CartPage />} />
                 <Route path="/order" element={<Protected><Order /></Protected>} />
+                <Route path="/order-success" element={<OrderSuccess />} />
                 <Route path="/my-orders" element={<Protected><MyOrders /></Protected>} />
                 <Route path="/delivery" element={<DeliveryInfo />} />
                 <Route path="/contact" element={<Contact />} />
