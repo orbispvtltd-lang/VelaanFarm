@@ -467,6 +467,30 @@ section {
     align-items: center;
 }
 
+@media (max-width: 992px) {
+    .about-container {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+    
+    .hero-container {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+
+    .hero-actions {
+        justify-content: center;
+    }
+    
+    .hero-stats {
+        justify-content: center;
+    }
+
+    .floating-card {
+        display: none; /* Hide floating cards on smaller screens to prevent overlap */
+    }
+}
+
 .about-image {
     display: flex;
     justify-content: center;
@@ -687,6 +711,13 @@ section {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 60px;
+}
+
+@media (max-width: 992px) {
+    .contact-container {
+        grid-template-columns: 1fr;
+        gap: 40px;
+    }
 }
 
 .contact-info-panel h2 {
@@ -1298,6 +1329,12 @@ footer {
     gap: 30px;
     max-width: 1700px;
     margin: 0 auto;
+}
+
+@media (max-width: 992px) {
+    .admin-grid {
+        grid-template-columns: 1fr;
+    }
 }
 .admin-card {
     background-color: white;
