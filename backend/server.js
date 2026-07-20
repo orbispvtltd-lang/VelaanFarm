@@ -267,7 +267,7 @@ app.post('/api/razorpay/create-order', async (req, res) => {
 
     const order = await instance.orders.create(options);
     if (!order) return res.status(500).json({ message: "Some error occured" });
-    res.json({ ...order, success: true });
+    res.json({ ...order, success: true, key_id: process.env.RAZORPAY_KEY_ID });
   } catch (error) {
     console.error('Razorpay Create Order Error:', error);
     res.status(500).json({ message: "Internal server error", success: false, error });
