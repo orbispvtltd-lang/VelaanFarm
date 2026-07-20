@@ -2,14 +2,14 @@ import { initializeApp } from "firebase/app";
 import { getDatabase } from "firebase/database";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCUBymUxDZfEVx_YVKkkCuZC6fGZO7s3fc",
-  authDomain: "velaanmilk.firebaseapp.com",
-  databaseURL: "https://velaanmilk-default-rtdb.firebaseio.com",
-  projectId: "velaanmilk",
-  storageBucket: "velaanmilk.firebasestorage.app",
-  messagingSenderId: "866934507233",
-  appId: "1:866934507233:web:ea08e484786eca44f719a0",
-  measurementId: "G-NE5H710KHD"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
 // Initialize Firebase
