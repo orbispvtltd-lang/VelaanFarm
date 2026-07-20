@@ -126,6 +126,51 @@ const Admin = () => {
   const totalSales = orders.reduce((sum, o) => sum + (o.status.includes('Delivered') ? o.total : 0), 0);
   const countByStatus = (kw) => orders.filter(o => o.status.includes(kw)).length;
 
+  const downloadOrdersCSV = () => {
+    if (orders.length === 0) {
+      alert("தரவிறக்கம் செய்ய ஆர்டர்கள் எதுவும் இல்லை (No orders to download).");
+      return;
+    }
+
+    const headers = [
+      "Order ID", "Date", "Customer Name", "Phone", "Email", 
+      "Address", "City", "District", "Pincode", "Payment Method", 
+      "Total Amount (Rs)", "Status", "Items"
+    ];
+
+    const csvRows = [headers.join(',')];
+
+    orders.forEach(o => {
+      const itemsStr = o.items ? o.items.map(i => `${i.name} (${i.variant}) x${i.qty}`).join('; ') : '';
+      const dateStr = new Date(o.createdAt).toLocaleString('en-IN');
+      const row = [
+        o.id,
+        `"${dateStr}"`,
+        `"${(o.name || '').replace(/"/g, '""')}"`,
+        `"${o.phone || ''}"`,
+        `"${(o.email || '').replace(/"/g, '""')}"`,
+        `"${(o.address || '').replace(/"/g, '""')}"`,
+        `"${(o.city || '').replace(/"/g, '""')}"`,
+        `"${(o.district || '').replace(/"/g, '""')}"`,
+        `"${o.pincode || ''}"`,
+        `"${o.paymentMethod === 'cod' ? 'COD' : 'Online'}"`,
+        o.total || 0,
+        `"${o.status || ''}"`,
+        `"${itemsStr}"`
+      ];
+      csvRows.push(row.join(','));
+    });
+
+    const csvContent = "data:text/csv;charset=utf-8,\uFEFF" + csvRows.join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `VelaanFarm_Orders_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   if (loading) {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh' }}>
@@ -203,7 +248,16 @@ const Admin = () => {
 
             {/* Orders Table */}
             <div className="admin-card" style={{ overflowX: 'auto' }}>
-              <h3>வாடிக்கையாளர் ஆர்டர் பட்டியல் (Orders List)</h3>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
+                <h3>வாடிக்கையாளர் ஆர்டர் பட்டியல் (Orders List)</h3>
+                <button 
+                  onClick={downloadOrdersCSV}
+                  className="btn btn-primary"
+                  style={{ padding: '8px 15px', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '8px' }}
+                >
+                  <i className="fas fa-download"></i> Download CSV
+                </button>
+              </div>
               {orders.length === 0 ? (
                 <p style={{ textAlign: 'center', margin: '30px 0', color: 'var(--text-light)' }}>ஆர்டர்கள் எதுவும் இன்னும் சமர்ப்பிக்கப்படவில்லை.</p>
               ) : (
