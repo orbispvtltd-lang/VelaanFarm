@@ -1546,6 +1546,7 @@ const Login = () => {
 };
 
 const Signup = () => {
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [pass, setPass] = useState('');
   const [showSplash, setShowSplash] = useState(false);
@@ -1555,19 +1556,19 @@ const Signup = () => {
 
   const handleSignup = async (e) => {
     e.preventDefault();
-    if (email && pass) {
+    if (name && email && pass) {
       try {
         const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
         const user = userCredential.user;
 
         const newUserRef = ref(database, 'users/' + user.uid);
         await set(newUserRef, {
-          name: email.split('@')[0],
+          name: name,
           email: email,
           role: 'user'
         });
 
-        const newUser = { id: user.uid, name: email.split('@')[0], email, role: 'user' };
+        const newUser = { id: user.uid, name: name, email, role: 'user' };
 
         setShowSplash(true);
 
@@ -1613,6 +1614,10 @@ const Signup = () => {
       <div className="form-card">
         <h2 className="form-title">பதிவு செய்க (Sign up)</h2>
         <form onSubmit={handleSignup} autoComplete="off">
+          <div className="form-group">
+            <label>பெயர் (Name)</label>
+            <input type="text" placeholder="Your Name" value={name} onChange={e => setName(e.target.value)} required autoComplete="name" />
+          </div>
           <div className="form-group">
             <label>மின்னஞ்சல் (Email)</label>
             <input type="email" placeholder="example@gmail.com" value={email} onChange={e => setEmail(e.target.value)} required autoComplete="off" />
