@@ -94,7 +94,8 @@ const Admin = () => {
     { value: 'விநியோகத்தில் (Pending)',          label: 'ஆர்டர் பெறப்பட்டது',  color: '#856404', bg: '#fff3cd' },
     { value: 'உறுதிப்படுத்தப்பட்டது (Confirmed)', label: 'உறுதிப்படுத்தப்பட்டது', color: '#0d6efd', bg: '#cfe2ff' },
     { value: 'அனுப்பப்பட்டது (Dispatched)',       label: 'அனுப்பப்பட்டது',       color: '#6f42c1', bg: '#e8d5ff' },
-    { value: 'விநியோகிக்கப்பட்டது (Delivered)',    label: 'வழங்கப்பட்டது',        color: '#198754', bg: '#d1e7dd' },
+    { value: 'வழங்கப்பட்டது (Delivered)',        label: 'வழங்கப்பட்டது',        color: '#198754', bg: '#d1e7dd' },
+    { value: 'ரத்து செய்யப்பட்டது (Cancelled)',   label: 'ரத்து செய்யப்பட்டது',   color: '#dc3545', bg: '#f8d7da' },
   ];
 
   const updateStatus = async (id, newStatus) => {
@@ -108,7 +109,8 @@ const Admin = () => {
   };
 
   const deleteOrder = async (id, status) => {
-    if (!status?.includes('வழங்கப்பட்டது') && !status?.includes('Delivered')) {
+    const s = (status || '').toLowerCase();
+    if (!s.includes('delivered') && !s.includes('வழங்கப்பட்டது') && !s.includes('விநியோகிக்கப்பட்டது')) {
       alert('வழங்கப்பட்ட (Delivered) ஆர்டர்களை மட்டுமே நீக்க முடியும்.');
       return;
     }
@@ -123,8 +125,34 @@ const Admin = () => {
     }
   };
 
-  const totalSales = orders.reduce((sum, o) => sum + (o.status.includes('Delivered') ? o.total : 0), 0);
-  const countByStatus = (kw) => orders.filter(o => o.status.includes(kw)).length;
+  // --- Total Delivered Sales Revenue ---
+  const totalSales = orders.reduce((sum, o) => {
+    const s = (o.status || '').toLowerCase();
+    if (s.includes('delivered') || s.includes('வழங்கப்பட்டது') || s.includes('விநியோகிக்கப்பட்டது')) {
+      return sum + (Number(o.total) || 0);
+    }
+    return sum;
+  }, 0);
+
+  // --- Delivered Count ---
+  const deliveredCount = orders.filter(o => {
+    const s = (o.status || '').toLowerCase();
+    return s.includes('delivered') || s.includes('வழங்கப்பட்டது') || s.includes('விநியோகிக்கப்பட்டது');
+  }).length;
+
+  // --- Cancelled Count ---
+  const cancelledCount = orders.filter(o => {
+    const s = (o.status || '').toLowerCase();
+    return s.includes('cancelled') || s.includes('ரத்து');
+  }).length;
+
+  // --- Pending / Active Count ---
+  const pendingCount = orders.filter(o => {
+    const s = (o.status || '').toLowerCase();
+    const isDelivered = s.includes('delivered') || s.includes('வழங்கப்பட்டது') || s.includes('விநியோகிக்கப்பட்டது');
+    const isCancelled = s.includes('cancelled') || s.includes('ரத்து');
+    return !isDelivered && !isCancelled;
+  }).length;
 
   const downloadOrdersCSV = () => {
     if (orders.length === 0) {
@@ -225,15 +253,15 @@ const Admin = () => {
                 <div style={{ fontSize: '0.9rem', color: 'var(--text-light)', fontWeight: '600' }}>மொத்த விற்பனை (Delivered)</div>
               </div>
               <div className="benefit-card" style={{ padding: '20px', textAlign: 'center' }}>
-                <div style={{ fontSize: '2rem', color: '#e67e22', marginBottom: '5px' }}>{countByStatus('விநியோகத்தில்')}</div>
+                <div style={{ fontSize: '2rem', color: '#e67e22', marginBottom: '5px' }}>{pendingCount}</div>
                 <div style={{ fontSize: '0.9rem', color: 'var(--text-light)', fontWeight: '600' }}>நிலுவையில் உள்ளவை (Pending)</div>
               </div>
               <div className="benefit-card" style={{ padding: '20px', textAlign: 'center' }}>
-                <div style={{ fontSize: '2rem', color: '#27ae60', marginBottom: '5px' }}>{countByStatus('வழங்கப்பட்டது')}</div>
+                <div style={{ fontSize: '2rem', color: '#27ae60', marginBottom: '5px' }}>{deliveredCount}</div>
                 <div style={{ fontSize: '0.9rem', color: 'var(--text-light)', fontWeight: '600' }}>வழங்கப்பட்டவை (Delivered)</div>
               </div>
               <div className="benefit-card" style={{ padding: '20px', textAlign: 'center' }}>
-                <div style={{ fontSize: '2rem', color: '#e74c3c', marginBottom: '5px' }}>{countByStatus('ரத்து')}</div>
+                <div style={{ fontSize: '2rem', color: '#e74c3c', marginBottom: '5px' }}>{cancelledCount}</div>
                 <div style={{ fontSize: '0.9rem', color: 'var(--text-light)', fontWeight: '600' }}>ரத்து செய்யப்பட்டவை (Cancelled)</div>
               </div>
             </div>
