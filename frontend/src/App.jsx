@@ -1810,6 +1810,31 @@ const App = () => {
               </Routes>
             </main>
 
+            {/* Mobile Bottom Navigation */}
+            <div className="mobile-bottom-nav">
+              <NavLink to="/" className={({isActive}) => isActive ? 'bottom-nav-item active-nav' : 'bottom-nav-item'}>
+                <i className="fas fa-home"></i>
+                <span>Home</span>
+              </NavLink>
+              <NavLink to="/products" className={({isActive}) => isActive ? 'bottom-nav-item active-nav' : 'bottom-nav-item'}>
+                <i className="fas fa-th-large"></i>
+                <span>Products</span>
+              </NavLink>
+              <NavLink to={auth.user ? "/my-orders" : "/login"} className={({isActive}) => isActive ? 'bottom-nav-item active-nav' : 'bottom-nav-item'}>
+                <i className="fas fa-user"></i>
+                <span>Account</span>
+              </NavLink>
+              <NavLink to="/cart" className={({isActive}) => isActive ? 'bottom-nav-item active-nav' : 'bottom-nav-item'} style={{ position: 'relative' }}>
+                <i className="fas fa-shopping-cart"></i>
+                <span>Cart</span>
+                {cart.length > 0 && (
+                  <span className="cart-badge" style={{ position: 'absolute', top: '-5px', right: '5px', fontSize: '0.65rem', width: '18px', height: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', backgroundColor: 'var(--accent-color)', color: 'white' }}>
+                    {cart.reduce((sum, i) => sum + i.qty, 0)}
+                  </span>
+                )}
+              </NavLink>
+            </div>
+
             {/* Footer */}
             <footer>
               <div className="footer-container">
