@@ -130,8 +130,8 @@ async function initializeDatabase() {
     const productsCount = await dbGet("SELECT COUNT(*) as count FROM products");
     if (productsCount.count === 0) {
       const initialProducts = [
-        { id: 'p1', name: 'Fresh Cow Milk (பசுவின் பால்)', category: 'milk', variant: '500ml', price: 45, image: '🥛', description: 'உடலுக்கு ஆரோக்கியமான, தூய்மையான பசுவின் பால். கொமரபாளையத்தில் வெள்ளிக்கிழமை தோறும் விநியோகம்.' },
-        { id: 'p2', name: 'Fresh Cow Milk (பசுவின் பால்)', category: 'milk', variant: '1L', price: 80, image: '🥛', description: 'எந்தவித கலப்படமும் இல்லாத நேரடி பண்ணை பால். கொமரபாளையத்தில் வெள்ளிக்கிழமை தோறும் விநியோகம்.' },
+        { id: 'p1', name: 'Fresh Cow Milk (பசுவின் பால்)', category: 'milk', variant: '500ml', price: 45, image: '🥛', description: 'உடலுக்கு ஆரோக்கியமான, தூய்மையான பசுவின் பால். குமாரபாளையத்தில் வெள்ளிக்கிழமை தோறும் விநியோகம்.' },
+        { id: 'p2', name: 'Fresh Cow Milk (பசுவின் பால்)', category: 'milk', variant: '1L', price: 80, image: '🥛', description: 'எந்தவித கலப்படமும் இல்லாத நேரடி பண்ணை பால். குமாரபாளையத்தில் வெள்ளிக்கிழமை தோறும் விநியோகம்.' },
         { id: 'p3', name: 'Pure Cow Ghee (நெய்)', category: 'ghee', variant: '250g', price: 350, image: '🧈', description: 'பாரம்பரிய முறையில் தயாரிக்கப்பட்ட மணமுள்ள நெய். தமிழகம் முழுவதும் கொரியர் வசதி.' },
         { id: 'p4', name: 'Pure Cow Ghee (நெய்)', category: 'ghee', variant: '500g', price: 650, image: '🧈', description: 'சுவையும் மணமும் நிறைந்த தூய பசு நெய். தமிழகம் முழுவதும் கொரியர் வசதி.' },
         { id: 'p5', name: 'Pure Cow Ghee (நெய்)', category: 'ghee', variant: '1kg', price: 1200, image: '🧈', description: 'குடும்பத்திற்கு ஏற்ற பெரிய பேக். தமிழகம் முழுவதும் கொரியர் வசதி.' }

@@ -21,8 +21,8 @@ const ToastContext = createContext();
 // ---------- SAMPLE DATA ----------
 const PRODUCTS = [
   // Milk
-  { id: 'p1', name: 'Fresh Milk (பசுவின் பால்)', category: 'milk', variant: '1 L', price: 60, image: MILK_IMG, description: 'எந்தவித கலப்படமும் இல்லாத நேரடி பண்ணை பால். கொமரபாளையத்தில் தினமும் விநியோகம்.' },
-  { id: 'p2', name: 'Fresh Milk (பசுவின் பால்)', category: 'milk', variant: '½ L', price: 30, image: MILK_IMG, description: 'உடலுக்கு ஆரோக்கியமான, தூய்மையான பசுவின் பால். கொமரபாளையத்தில் தினமும் விநியோகம்.' },
+  { id: 'p1', name: 'Fresh Milk (பசுவின் பால்)', category: 'milk', variant: '1 L', price: 60, image: MILK_IMG, description: 'எந்தவித கலப்படமும் இல்லாத நேரடி பண்ணை பால். குமாரபாளையத்தில் தினமும் விநியோகம்.' },
+  { id: 'p2', name: 'Fresh Milk (பசுவின் பால்)', category: 'milk', variant: '½ L', price: 30, image: MILK_IMG, description: 'உடலுக்கு ஆரோக்கியமான, தூய்மையான பசுவின் பால். குமாரபாளையத்தில் தினமும் விநியோகம்.' },
   // Curd
   { id: 'p3', name: 'Fresh Curd (தயிர்)', category: 'curd', variant: '1 L', price: 80, image: CURD_IMG, description: 'நேரடி பண்ணை பாலில் இருந்து தயாரித்த புளிப்பு கலந்த இயற்கை தயிர்.' },
   { id: 'p4', name: 'Fresh Curd (தயிர்)', category: 'curd', variant: '½ L', price: 40, image: CURD_IMG, description: 'நேரடி பண்ணை பாலில் இருந்து தயாரித்த புளிப்பு கலந்த இயற்கை தயிர்.' },
@@ -164,7 +164,7 @@ const Home = () => {
             </span>
             <h1>வேளாண் <span className="highlight">பண்ணை</span></h1>
             <p className="hero-desc">
-              Since 1977 - பாரம்பரியம் மாறா தரம். நேரடி பண்ணை பசுவின் பால் மற்றும் பாரம்பரிய முறையில் காய்ச்சிய மணமிக்க நெய். கொமரபாளையத்தில் பால் விநியோகம், தமிழகம் முழுவதும் கொரியர் வசதி.
+              Since 1977 - பாரம்பரியம் மாறா தரம். நேரடி பண்ணை பசுவின் பால் மற்றும் பாரம்பரிய முறையில் காய்ச்சிய மணமிக்க நெய். குமாரபாளையத்தில் பால் விநியோகம், தமிழகம் முழுவதும் கொரியர் வசதி.
             </p>
             <div className="hero-actions" style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
               <button onClick={() => navigate('/products')} className="btn btn-primary">
@@ -230,7 +230,7 @@ const Home = () => {
             <span className="section-subtitle">எங்களைப் பற்றி</span>
             <h2>அன்பான வாடிக்கையாளர்களுக்கு வணக்கம்!</h2>
             <p className="about-text">
-              1977 ஆம் ஆண்டு முதல் கொமரபாளையத்தில் தரமான பசுவின் பால் வழங்கி வரும் பாரம்பரியம் கொண்டது எங்கள் வேளாண் பண்ணை. பசுக்கள் இயற்கை முறையில் வளர்க்கப்பட்டு, தூய்மையான முறையில் பால் மற்றும் நெய் தயாரிக்கப்படுகிறது.
+              1977 ஆம் ஆண்டு முதல் குமாரபாளையத்தில் தரமான பசுவின் பால் வழங்கி வரும் பாரம்பரியம் கொண்டது எங்கள் வேளாண் பண்ணை. பசுக்கள் இயற்கை முறையில் வளர்க்கப்பட்டு, தூய்மையான முறையில் பால் மற்றும் நெய் தயாரிக்கப்படுகிறது.
             </p>
             <p className="about-text">
               எங்கள் நோக்கம் மக்களுக்கு ஆரோக்கியமான மற்றும் இயற்கையான பால் பொருட்களை நேரடியாக வழங்குவதாகும்.
@@ -287,7 +287,7 @@ const Home = () => {
               <i className="fas fa-truck"></i>
             </div>
             <h3>முறையான விநியோகம்</h3>
-            <p>கொமரபாளையத்தில் தினமும் உங்கள் இல்லம் தேடி வரும் பால் விநியோகம்.</p>
+            <p>குமாரபாளையத்தில் தினமும் உங்கள் இல்லம் தேடி வரும் பால் விநியோகம்.</p>
           </div>
         </div>
       </section>
@@ -322,7 +322,7 @@ const Home = () => {
                 </div>
                 <div>
                   <h4>தொலைபேசி</h4>
-                  <p><a href="tel:+917092782855">+91 70927 82855</a></p>
+                  <p><a href="tel:+919342632853">+91 93426 32853</a></p>
                 </div>
               </div>
               <div className="contact-item">
@@ -331,7 +331,7 @@ const Home = () => {
                 </div>
                 <div>
                   <h4>முகவரி</h4>
-                  <p>5f11/1 manimegalai street, kumarapalayam, nammakal, Pincode - 638183</p>
+                  <p>5f11/1 Manimegalai street, Kumarapalayam, Namakkal, Pincode - 638183</p>
                 </div>
               </div>
             </div>
@@ -387,7 +387,7 @@ const About = () => {
 
           <div className="benefit-card" style={{ marginBottom: '40px', lineHeight: 1.8 }}>
             <p style={{ fontSize: '1.1rem', marginBottom: '20px' }}>
-              <strong>வேளாண் பண்ணை</strong> 1977-ல் திரு. ஆறுமுகம் பால்காரர் அவர்களால் கொமரபாளையத்தில் ஒரு சிறு பால் பண்ணையாக துவங்கப்பட்டது. கடந்த 45 ஆண்டுகளுக்கும் மேலாக தரமான, இயற்கையான பசுவின் பாலை கொமரபாளைய மக்களுக்கு வழங்கி வருகிறோம்.
+              <strong>வேளாண் பண்ணை</strong> 1977-ல் திரு. ஆறுமுகம் பால்காரர் அவர்களால் குமாரபாளையத்தில் ஒரு சிறு பால் பண்ணையாக துவங்கப்பட்டது. கடந்த 45 ஆண்டுகளுக்கும் மேலாக தரமான, இயற்கையான பசுவின் பாலை குமாரபாளைய மக்களுக்கு வழங்கி வருகிறோம்.
             </p>
             <p style={{ fontSize: '1.1rem', marginBottom: '20px' }}>
               பசுக்கள் இயற்கை புற்கள், பருத்தி கொட்டை, தவிடு ஆகியவற்றை மட்டுமே தீவனமாக கொண்டு வளர்க்கப்படுகின்றன. எந்தவொரு செயற்கை ஊக்க மருந்துகளோ அல்லது வேதிப்பொருட்களோ பயன்படுத்தப்படுவதில்லை. இதனால் பால் மற்றும் நெய் முற்றிலும் இயற்கை தன்மையுடன் உள்ளது.
@@ -401,7 +401,7 @@ const About = () => {
             <div className="benefit-card" style={{ textAlign: 'center' }}>
               <div className="b-icon" style={{ margin: '0 auto 20px auto' }}>🥛</div>
               <h3>பசுவின் பால்</h3>
-              <p>தினமும் காலையில் கொமரபாளையத்தில் பிரத்யேகமாக விநியோகம் செய்யப்படுகிறது.</p>
+              <p>தினமும் காலையில் குமாரபாளையத்தில் பிரத்யேகமாக விநியோகம் செய்யப்படுகிறது.</p>
             </div>
             <div className="benefit-card" style={{ textAlign: 'center' }}>
               <div className="b-icon" style={{ margin: '0 auto 20px auto' }}>🧈</div>
@@ -943,7 +943,7 @@ const Order = () => {
             <div className="benefit-card" style={{ backgroundColor: '#f1f8ee' }}>
               <h4 style={{ color: 'var(--primary-color)', marginBottom: '10px' }}><i className="fas fa-truck"></i> தினசரி விநியோகம்</h4>
               <p style={{ fontSize: '0.9rem', color: '#2b5e2b', lineHeight: 1.5 }}>
-                கொமரபாளையத்தில் பால் தினமும் நேரடியாக வழங்கப்படும். தூய நெய் ஆர்டர்கள் Courier மூலம் உடனடியாக அனுப்பப்படும்.
+                குமாரபாளையத்தில் பால் தினமும் நேரடியாக வழங்கப்படும். தூய நெய் ஆர்டர்கள் Courier மூலம் உடனடியாக அனுப்பப்படும்.
               </p>
             </div>
           </div>
@@ -1118,8 +1118,8 @@ const DeliveryInfo = () => {
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', lineHeight: 1.7 }}>
           <div>
-            <h4 style={{ color: 'var(--primary-color)', fontSize: '1.2rem', marginBottom: '8px' }}><i className="fas fa-city"></i> கொமரபாளையம் நகர பால் விநியோகம்</h4>
-            <p>எங்களது பண்ணை பசுவின் பால் கொமரபாளையம் நகரில் தினமும் காலை விநியோகம் செய்யப்படுகிறது. ஆர்டர்கள் தினமும் காலையில் உங்கள் இல்லம் தேடி வரும்.</p>
+            <h4 style={{ color: 'var(--primary-color)', fontSize: '1.2rem', marginBottom: '8px' }}><i className="fas fa-city"></i> குமாரபாளையம் நகர பால் விநியோகம்</h4>
+            <p>எங்களது பண்ணை பசுவின் பால் குமாரபாளையம் நகரில் தினமும் காலை விநியோகம் செய்யப்படுகிறது. ஆர்டர்கள் தினமும் காலையில் உங்கள் இல்லம் தேடி வரும்.</p>
           </div>
 
           <div style={{ borderTop: '1px solid rgba(0,0,0,0.05)', paddingTop: '20px' }}>
@@ -1130,7 +1130,7 @@ const DeliveryInfo = () => {
           <div style={{ borderTop: '1px solid rgba(0,0,0,0.05)', paddingTop: '20px' }}>
             <h4 style={{ color: 'var(--primary-color)', fontSize: '1.2rem', marginBottom: '8px' }}><i className="fas fa-truck-loading"></i> விநியோக கட்டணங்கள்</h4>
             <ul>
-              <li>கொமரபாளையம் நகருக்குள் பால் விநியோகம் முற்றிலும் <strong>இலவசம்</strong>.</li>
+              <li>குமாரபாளையம் நகருக்குள் பால் விநியோகம் முற்றிலும் <strong>இலவசம்</strong>.</li>
               <li>நெய் ஆர்டர்களுக்கு ₹500 அல்லது அதற்கு மேல் வாங்கினால் கொரியர் விநியோகம் முற்றிலும் <strong>இலவசம்</strong>.</li>
               <li>₹500-க்கு குறைவான நெய் ஆர்டர்களுக்கு ₹50 கொரியர் கட்டணம் வசூலிக்கப்படும்.</li>
             </ul>
@@ -1191,7 +1191,7 @@ const Contact = () => {
               <div className="c-icon"><i className="fas fa-phone"></i></div>
               <div>
                 <h4>தொலைபேசி</h4>
-                <p><a href="tel:+917092782855" style={{ color: 'inherit' }}>+91 70927 82855</a></p>
+                <p><a href="tel:+919342632853" style={{ color: 'inherit' }}>+91 93426 32853</a></p>
               </div>
             </div>
             <div className="contact-item">
@@ -1205,7 +1205,7 @@ const Contact = () => {
               <div className="c-icon"><i className="fas fa-map-marker-alt"></i></div>
               <div>
                 <h4>முகவரி</h4>
-                <p>5f11/1 manimegalai street, kumarapalayam, nammakal, Pincode - 638183</p>
+                <p>5f11/1 Manimegalai street, Kumarapalayam, Namakkal, Pincode - 638183</p>
               </div>
             </div>
           </div>
@@ -1439,7 +1439,7 @@ const OrderSuccess = () => {
           fontSize: '0.95rem', color: 'var(--primary-dark)'
         }}>
           <i className="fas fa-headset"></i> ஏதேனும் சந்தேகங்களுக்கு தொடர்பு கொள்ளவும்: 
-          <br/><strong>7092782855</strong>
+          <br/><strong>9342632853</strong>
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
@@ -1842,8 +1842,8 @@ const App = () => {
                   <img src={LOGO_URL} alt="Velaan Farm Logo" className="footer-logo" />
                   <h3>வேளாண் பண்ணை</h3>
                   <p>100% தூய்மையான பண்ணை பசுவின் பால் மற்றும் நெய்</p>
-                  <p style={{ fontSize: '0.9rem', marginTop: '5px', opacity: 0.7 }}>5f11/1 manimegalai street, kumarapalayam, nammakal - 638183</p>
-                  <p style={{ fontSize: '0.9rem', opacity: 0.7 }}>தொலைபேசி: +91 70927 82855</p>
+                  <p style={{ fontSize: '0.9rem', marginTop: '5px', opacity: 0.7 }}>5f11/1 Manimegalai street, Kumarapalayam, Namakkal, Pincode - 638183</p>
+                  <p style={{ fontSize: '0.9rem', opacity: 0.7 }}>தொலைபேசி: +91 93426 32853</p>
                 </div>
                 <div className="footer-copyright">
                   <p>© 2026 Orbis Freelancing. All Rights Reserved. Orbis Freelancing specializes in AI Development, Full-Stack Web Solutions, UI/UX Design, Automation, Branding, and Digital Growth Services. Crafted with cutting-edge technologies for exceptional user experiences across all platforms.</p>
