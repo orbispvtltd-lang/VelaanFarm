@@ -68,29 +68,60 @@ const cartReducer = (state, action) => {
   }
 };
 
-const initialAuth = {
-  user: JSON.parse(localStorage.getItem('velaan_user')) || null,
-  token: localStorage.getItem('velaan_token') || null
+const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
+
+const getInitialAuth = () => {
+  try {
+    const userStr = localStorage.getItem('velaan_user');
+    const token = localStorage.getItem('velaan_token');
+    const loginTimeStr = localStorage.getItem('velaan_login_time');
+
+    if (userStr && loginTimeStr) {
+      const loginTime = Number(loginTimeStr);
+      if (Date.now() - loginTime < SEVEN_DAYS_MS) {
+        return { user: JSON.parse(userStr), token: token || null };
+      }
+    }
+  } catch (err) {
+    console.error('Failed to parse initial auth:', err);
+  }
+  localStorage.removeItem('velaan_user');
+  localStorage.removeItem('velaan_token');
+  localStorage.removeItem('velaan_login_time');
+  return { user: null, token: null };
 };
+
+const initialAuth = getInitialAuth();
+
 const authReducer = (state, action) => {
   if (action.type === 'LOGIN') {
     localStorage.setItem('velaan_user', JSON.stringify(action.payload.user));
-    localStorage.setItem('velaan_token', action.payload.token);
+    localStorage.setItem('velaan_token', action.payload.token || '');
+    localStorage.setItem('velaan_login_time', Date.now().toString());
     return { user: action.payload.user, token: action.payload.token };
   }
   if (action.type === 'LOGOUT') {
     localStorage.removeItem('velaan_user');
     localStorage.removeItem('velaan_token');
+    localStorage.removeItem('velaan_login_time');
     return { user: null, token: null };
   }
   return state;
 };
 
-// ---------- PROTECTED ROUTE WRAPPER ----------
+// ---------- PROTECTED & PUBLIC ROUTE WRAPPERS ----------
 const Protected = ({ children }) => {
   const { state: auth } = useContext(AuthContext);
   if (!auth.user) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/signup" replace />;
+  }
+  return children;
+};
+
+const PublicOnly = ({ children }) => {
+  const { state: auth } = useContext(AuthContext);
+  if (auth.user) {
+    return <Navigate to="/" replace />;
   }
   return children;
 };
@@ -1792,18 +1823,18 @@ const App = () => {
               {/* Routes Content */}
               <main style={{ flexGrow: 1 }}>
                 <Routes>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/about" element={<About />} />
-                  <Route path="/products" element={<Products />} />
-                  <Route path="/cart" element={<CartPage />} />
+                  <Route path="/" element={<Protected><Home /></Protected>} />
+                  <Route path="/about" element={<Protected><About /></Protected>} />
+                  <Route path="/products" element={<Protected><Products /></Protected>} />
+                  <Route path="/cart" element={<Protected><CartPage /></Protected>} />
                   <Route path="/order" element={<Protected><Order /></Protected>} />
-                  <Route path="/order-success" element={<OrderSuccess />} />
+                  <Route path="/order-success" element={<Protected><OrderSuccess /></Protected>} />
                   <Route path="/my-orders" element={<Protected><MyOrders /></Protected>} />
-                  <Route path="/delivery" element={<DeliveryInfo />} />
-                  <Route path="/contact" element={<Contact />} />
+                  <Route path="/delivery" element={<Protected><DeliveryInfo /></Protected>} />
+                  <Route path="/contact" element={<Protected><Contact /></Protected>} />
 
-                  <Route path="/login" element={<Login />} />
-                  <Route path="/signup" element={<Signup />} />
+                  <Route path="/login" element={<PublicOnly><Login /></PublicOnly>} />
+                  <Route path="/signup" element={<PublicOnly><Signup /></PublicOnly>} />
                   <Route path="/forgot-password" element={<ForgotPassword />} />
                   {/* Fallback to Home */}
                   <Route path="*" element={<Navigate to="/" replace />} />
