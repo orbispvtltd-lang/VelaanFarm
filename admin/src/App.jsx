@@ -107,12 +107,8 @@ const Admin = () => {
     }
   };
 
-  const deleteOrder = async (id, status) => {
-    if (!status.includes('Delivered') && !status.includes('வழங்கப்பட்டது')) {
-      alert('வழங்கப்பட்ட (Delivered) ஆர்டர்களை மட்டுமே நீக்க முடியும். (You can only delete Delivered orders.)');
-      return;
-    }
-    if (window.confirm('இந்த ஆர்டரை நீக்கலாமா?')) {
+  const deleteOrder = async (id) => {
+    if (window.confirm('இந்த ஆர்டரை நிச்சயமாக நீக்க வேண்டுமா? (Are you sure you want to delete this order?)')) {
       try {
         const orderRef = ref(database, `orders/${id}`);
         await update(orderRef, { adminDeleted: true });
@@ -298,7 +294,7 @@ const Admin = () => {
                           })()}
                         </td>
                         <td data-label="செயல்">
-                          <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
+                          <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'nowrap', whiteSpace: 'nowrap' }}>
                             <select
                               value={o.status}
                               onChange={e => updateStatus(o.id, e.target.value)}
@@ -306,23 +302,33 @@ const Admin = () => {
                                 padding: '6px 10px', borderRadius: '8px', fontSize: '0.82rem',
                                 border: '1px solid rgba(30,94,58,0.25)', cursor: 'pointer',
                                 background: 'white', color: 'var(--primary-dark)', fontWeight: '600',
-                                outline: 'none'
+                                outline: 'none', flexShrink: 0
                               }}
                             >
                               {ORDER_STATUSES.map(s => (
                                 <option key={s.value} value={s.value}>{s.label}</option>
                               ))}
                             </select>
-                            { (o.status.includes('Delivered') || o.status.includes('வழங்கப்பட்டது')) && (
-                              <button
-                                onClick={() => deleteOrder(o.id, o.status)}
-                                className="remove-btn"
-                                style={{ padding: '4px' }}
-                                title="Delete Order"
-                              >
-                                <i className="fas fa-trash-alt"></i>
-                              </button>
-                            )}
+                            <button
+                              onClick={() => deleteOrder(o.id)}
+                              className="remove-btn"
+                              style={{
+                                padding: '6px 10px',
+                                borderRadius: '8px',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                backgroundColor: '#dc3545',
+                                color: 'white',
+                                border: 'none',
+                                cursor: 'pointer',
+                                fontSize: '0.82rem',
+                                flexShrink: 0
+                              }}
+                              title="Delete Order"
+                            >
+                              <i className="fas fa-trash-alt"></i>
+                            </button>
                           </div>
                         </td>
                       </tr>
