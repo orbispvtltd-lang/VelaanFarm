@@ -218,17 +218,6 @@ const Admin = () => {
 
         {activeTab === 'orders' ? (
           <>
-            {/* Stats */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px', marginBottom: '30px' }}>
-              <div className="benefit-card" style={{ padding: '20px' }}>
-                <p style={{ color: 'var(--text-light)', fontSize: '0.9rem' }}>மொத்த ஆர்டர்கள்</p>
-                <h3 style={{ fontSize: '2rem', color: 'var(--primary-color)', marginTop: '5px' }}>{orders.length}</h3>
-              </div>
-              <div className="benefit-card" style={{ padding: '20px', borderLeft: '4px solid #856404' }}>
-                <p style={{ color: 'var(--text-light)', fontSize: '0.9rem' }}>பெறப்பட்டது (Pending)</p>
-                <h3 style={{ fontSize: '2rem', color: '#856404', marginTop: '5px' }}>{countByStatus('Pending')}</h3>
-              </div>
-              <div className="benefit-card" style={{ padding: '20px', borderLeft: '4px solid #0d6efd' }}>
             {/* Summary Stats Cards */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '20px', marginBottom: '30px' }}>
               <div className="benefit-card" style={{ padding: '20px', textAlign: 'center' }}>
