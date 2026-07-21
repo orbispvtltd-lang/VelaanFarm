@@ -107,7 +107,11 @@ const Admin = () => {
     }
   };
 
-  const deleteOrder = async (id) => {
+  const deleteOrder = async (id, status) => {
+    if (!status?.includes('வழங்கப்பட்டது') && !status?.includes('Delivered')) {
+      alert('வழங்கப்பட்ட (Delivered) ஆர்டர்களை மட்டுமே நீக்க முடியும்.');
+      return;
+    }
     if (window.confirm('இந்த ஆர்டரை நிச்சயமாக நீக்க வேண்டுமா? (Are you sure you want to delete this order?)')) {
       try {
         const orderRef = ref(database, `orders/${id}`);
@@ -225,34 +229,31 @@ const Admin = () => {
                 <h3 style={{ fontSize: '2rem', color: '#856404', marginTop: '5px' }}>{countByStatus('Pending')}</h3>
               </div>
               <div className="benefit-card" style={{ padding: '20px', borderLeft: '4px solid #0d6efd' }}>
-                <p style={{ color: 'var(--text-light)', fontSize: '0.9rem' }}>உறுதி (Confirmed)</p>
-                <h3 style={{ fontSize: '2rem', color: '#0d6efd', marginTop: '5px' }}>{countByStatus('Confirmed')}</h3>
+            {/* Summary Stats Cards */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '20px', marginBottom: '30px' }}>
+              <div className="benefit-card" style={{ padding: '20px', textAlign: 'center' }}>
+                <div style={{ fontSize: '2rem', color: 'var(--primary-color)', marginBottom: '5px' }}>₹{totalSales.toLocaleString()}</div>
+                <div style={{ fontSize: '0.9rem', color: 'var(--text-light)', fontWeight: '600' }}>மொத்த விற்பனை (Delivered)</div>
               </div>
-              <div className="benefit-card" style={{ padding: '20px', borderLeft: '4px solid #6f42c1' }}>
-                <p style={{ color: 'var(--text-light)', fontSize: '0.9rem' }}>அனுப்பப்பட்டது (Dispatched)</p>
-                <h3 style={{ fontSize: '2rem', color: '#6f42c1', marginTop: '5px' }}>{countByStatus('Dispatched')}</h3>
+              <div className="benefit-card" style={{ padding: '20px', textAlign: 'center' }}>
+                <div style={{ fontSize: '2rem', color: '#e67e22', marginBottom: '5px' }}>{countByStatus('விநியோகத்தில்')}</div>
+                <div style={{ fontSize: '0.9rem', color: 'var(--text-light)', fontWeight: '600' }}>நிலுவையில் உள்ளவை (Pending)</div>
               </div>
-              <div className="benefit-card" style={{ padding: '20px', borderLeft: '4px solid #198754' }}>
-                <p style={{ color: 'var(--text-light)', fontSize: '0.9rem' }}>வழங்கப்பட்டது (Delivered)</p>
-                <h3 style={{ fontSize: '2rem', color: '#198754', marginTop: '5px' }}>{countByStatus('Delivered')}</h3>
+              <div className="benefit-card" style={{ padding: '20px', textAlign: 'center' }}>
+                <div style={{ fontSize: '2rem', color: '#27ae60', marginBottom: '5px' }}>{countByStatus('வழங்கப்பட்டது')}</div>
+                <div style={{ fontSize: '0.9rem', color: 'var(--text-light)', fontWeight: '600' }}>வழங்கப்பட்டவை (Delivered)</div>
               </div>
-              <div className="benefit-card" style={{ padding: '20px', borderLeft: '4px solid var(--primary-color)' }}>
-                <p style={{ color: 'var(--text-light)', fontSize: '0.9rem' }}>மொத்த விற்பனை (Revenue)</p>
-                <h3 style={{ fontSize: '2rem', color: 'var(--primary-color)', marginTop: '5px' }}>₹{totalSales}</h3>
+              <div className="benefit-card" style={{ padding: '20px', textAlign: 'center' }}>
+                <div style={{ fontSize: '2rem', color: '#e74c3c', marginBottom: '5px' }}>{countByStatus('ரத்து')}</div>
+                <div style={{ fontSize: '0.9rem', color: 'var(--text-light)', fontWeight: '600' }}>ரத்து செய்யப்பட்டவை (Cancelled)</div>
               </div>
             </div>
 
             {/* Orders Table */}
-            <div className="admin-card" style={{ overflowX: 'auto' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
-                <h3>வாடிக்கையாளர் ஆர்டர் பட்டியல் (Orders List)</h3>
-                <button 
-                  onClick={downloadOrdersCSV}
-                  className="btn btn-primary"
-                  style={{ padding: '8px 15px', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '8px' }}
-                >
-                  <i className="fas fa-download"></i> Download CSV
-                </button>
+            <div className="admin-card">
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '10px' }}>
+                <h3>வாடிக்கையாளர் ஆர்டர்களின் பட்டியல் (Order List)</h3>
+                <span style={{ fontSize: '0.9rem', color: 'var(--text-light)' }}>மொத்தம் {orders.length} ஆர்டர்கள்</span>
               </div>
               {orders.length === 0 ? (
                 <p style={{ textAlign: 'center', margin: '30px 0', color: 'var(--text-light)' }}>ஆர்டர்கள் எதுவும் இன்னும் சமர்ப்பிக்கப்படவில்லை.</p>
@@ -309,26 +310,28 @@ const Admin = () => {
                                 <option key={s.value} value={s.value}>{s.label}</option>
                               ))}
                             </select>
-                            <button
-                              onClick={() => deleteOrder(o.id)}
-                              className="remove-btn"
-                              style={{
-                                padding: '6px 10px',
-                                borderRadius: '8px',
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                backgroundColor: '#dc3545',
-                                color: 'white',
-                                border: 'none',
-                                cursor: 'pointer',
-                                fontSize: '0.82rem',
-                                flexShrink: 0
-                              }}
-                              title="Delete Order"
-                            >
-                              <i className="fas fa-trash-alt"></i>
-                            </button>
+                            {(o.status?.includes('வழங்கப்பட்டது') || o.status?.includes('Delivered')) && (
+                              <button
+                                onClick={() => deleteOrder(o.id, o.status)}
+                                className="remove-btn"
+                                style={{
+                                  padding: '6px 10px',
+                                  borderRadius: '8px',
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  backgroundColor: '#dc3545',
+                                  color: 'white',
+                                  border: 'none',
+                                  cursor: 'pointer',
+                                  fontSize: '0.82rem',
+                                  flexShrink: 0
+                                }}
+                                title="Delete Order"
+                              >
+                                <i className="fas fa-trash-alt"></i>
+                              </button>
+                            )}
                           </div>
                         </td>
                       </tr>
