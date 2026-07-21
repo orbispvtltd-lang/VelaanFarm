@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext, createContext, useReducer, useMemo } from 'react';
 import { BrowserRouter, Routes, Route, Link, NavLink, useNavigate, useParams, Navigate, useLocation } from 'react-router-dom';
-import { ref, push, get, child, set } from 'firebase/database';
+import { ref, push, get, child, set, update } from 'firebase/database';
 import { database, auth } from './firebase';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
 
@@ -992,10 +992,11 @@ const MyOrders = () => {
   const [loading, setLoading] = useState(true);
   const [phone, setPhone] = useState('');
   const [searched, setSearched] = useState(false);
+  const [activeTrackId, setActiveTrackId] = useState(null);
 
   const STATUS_STEPS = [
     { key: 'pending', label: 'ஆர்டர் பெறப்பட்டது', icon: 'fa-check-circle' },
-    { key: 'confirmed', label: 'உறுதிப்படுத்தப்பட்டது', icon: 'fa-thumbs-up' },
+    { key: 'confirmed', label: 'உறுதி செய்யப்பட்டது', icon: 'fa-thumbs-up' },
     { key: 'dispatch', label: 'அனுப்பப்பட்டது', icon: 'fa-shipping-fast' },
     { key: 'delivered', label: 'வழங்கப்பட்டது', icon: 'fa-home' },
   ];
@@ -1041,12 +1042,26 @@ const MyOrders = () => {
     setSearched(true);
   };
 
+  const handleCancelOrder = async (orderId) => {
+    if (window.confirm('இந்த ஆர்டரை நிச்சயமாக ரத்து செய்ய வேண்டுமா? (Are you sure you want to cancel this order?)')) {
+      try {
+        const orderRef = ref(database, `orders/${orderId}`);
+        await update(orderRef, { status: 'ரத்து செய்யப்பட்டது (Cancelled)' });
+        setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status: 'ரத்து செய்யப்பட்டது (Cancelled)' } : o));
+        alert('ஆர்டர் வெற்றிகரமாக ரத்து செய்யப்பட்டது. (Order cancelled successfully.)');
+      } catch (err) {
+        console.error('Cancel order error:', err);
+        alert('ஆர்டரை ரத்து செய்வதில் பிழை ஏற்பட்டது.');
+      }
+    }
+  };
+
   return (
     <section style={{ paddingTop: '140px', minHeight: '85vh', background: 'var(--bg-light)' }}>
       <div style={{ maxWidth: '900px', margin: '0 auto', padding: '0 4%' }}>
         <span className="section-subtitle">கண்காணிப்பு</span>
         <h2 style={{ fontSize: '2.2rem', color: 'var(--primary-dark)', marginBottom: '8px' }}>என் ஆர்டர்கள்</h2>
-        <p style={{ color: 'var(--text-light)', marginBottom: '36px' }}>உங்கள் ஆர்டரின் நிலையை இங்கே பார்க்கலாம்.</p>
+        <p style={{ color: 'var(--text-light)', marginBottom: '36px' }}>உங்கள் ஆர்டரின் நிலையை இங்கே பார்க்கவும் அல்லது ரத்து செய்யவும்.</p>
 
         {/* Guest phone lookup */}
         {!auth.user && (
@@ -1082,54 +1097,121 @@ const MyOrders = () => {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
           {orders.map(order => {
             const step = getStepIndex(order.status);
+            const statusStr = (order.status || '').toLowerCase();
+            const isCancelled = statusStr.includes('cancelled') || statusStr.includes('ரத்து');
+            const isDelivered = statusStr.includes('delivered') || statusStr.includes('வழங்கப்பட்டது');
+
             return (
-              <div key={order.id} className="benefit-card" style={{ padding: '28px', borderRadius: '18px', boxShadow: '0 4px 24px rgba(30,94,58,0.08)', background: 'white' }}>
+              <div key={order.id} className="benefit-card" style={{ padding: '28px', borderRadius: '18px', boxShadow: '0 4px 24px rgba(30,94,58,0.08)', background: 'white', border: '1px solid rgba(30,94,58,0.1)' }}>
                 {/* Order header */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '10px', marginBottom: '20px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '10px', marginBottom: '16px' }}>
                   <div>
-                    <h3 style={{ fontSize: '1rem', color: 'var(--primary-dark)', marginBottom: '4px' }}>
+                    <h3 style={{ fontSize: '1.05rem', color: 'var(--primary-dark)', marginBottom: '4px' }}>
                       <i className="fas fa-receipt" style={{ marginRight: '8px', color: 'var(--primary-color)' }}></i>
                       {order.customer} — {order.date}
                     </h3>
-                    <p style={{ fontSize: '0.88rem', color: 'var(--text-light)' }}>{order.products}</p>
+                    <p style={{ fontSize: '0.9rem', color: 'var(--text-light)' }}>{order.products}</p>
                   </div>
-                  <span style={{ fontWeight: '700', fontSize: '1.1rem', color: 'var(--primary-dark)' }}>₹{order.total}</span>
-                </div>
-
-                {/* Status Timeline */}
-                <div style={{ display: 'flex', alignItems: 'center', position: 'relative', marginTop: '10px' }}>
-                  {STATUS_STEPS.map((s, i) => {
-                    const done = i <= step;
-                    const active = i === step;
-                    return (
-                      <React.Fragment key={s.key}>
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: i < STATUS_STEPS.length - 1 ? 'none' : 'none', zIndex: 1 }}>
-                          <div style={{
-                            width: '40px', height: '40px', borderRadius: '50%',
-                            background: done ? 'var(--primary-color)' : '#e8ede9',
-                            display: 'flex', alignItems: 'center', justifyContent: 'center',
-                            boxShadow: active ? '0 0 0 4px rgba(45,138,86,0.2)' : 'none',
-                            transition: 'all 0.3s'
-                          }}>
-                            <i className={`fas ${s.icon}`} style={{ color: done ? 'white' : '#aaa', fontSize: '0.9rem' }}></i>
-                          </div>
-                          <span style={{ fontSize: '0.72rem', marginTop: '6px', color: done ? 'var(--primary-color)' : '#aaa', fontWeight: done ? '700' : '400', textAlign: 'center', maxWidth: '70px' }}>
-                            {s.label}
-                          </span>
-                        </div>
-                        {i < STATUS_STEPS.length - 1 && (
-                          <div style={{ flex: 1, height: '3px', background: i < step ? 'var(--primary-color)' : '#e8ede9', margin: '0 4px', marginBottom: '22px', transition: 'background 0.3s' }}></div>
-                        )}
-                      </React.Fragment>
-                    );
-                  })}
+                  <div style={{ textAlign: 'right' }}>
+                    <span style={{ fontWeight: '700', fontSize: '1.2rem', color: 'var(--primary-dark)', display: 'block' }}>₹{order.total}</span>
+                    <span style={{
+                      fontSize: '0.78rem',
+                      fontWeight: '700',
+                      padding: '3px 10px',
+                      borderRadius: '12px',
+                      display: 'inline-block',
+                      marginTop: '4px',
+                      backgroundColor: isCancelled ? '#ffebee' : isDelivered ? '#e8f5e9' : '#fff3e0',
+                      color: isCancelled ? '#c62828' : isDelivered ? '#2e7d32' : '#ef6c00'
+                    }}>
+                      {order.status || 'செயலாக்கத்தில் (Processing)'}
+                    </span>
+                  </div>
                 </div>
 
                 {/* Address */}
-                <div style={{ marginTop: '16px', padding: '12px 16px', background: '#f7faf7', borderRadius: '10px', fontSize: '0.88rem', color: 'var(--text-light)' }}>
+                <div style={{ marginTop: '12px', padding: '10px 14px', background: '#f7faf7', borderRadius: '10px', fontSize: '0.86rem', color: 'var(--text-light)', marginBottom: '16px' }}>
                   <i className="fas fa-map-marker-alt" style={{ marginRight: '8px', color: 'var(--primary-color)' }}></i>
                   {order.address}
                 </div>
+
+                {/* Action Buttons: Track & Cancel */}
+                <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'center', borderTop: '1px solid rgba(0,0,0,0.06)', paddingTop: '16px' }}>
+                  <button
+                    onClick={() => setActiveTrackId(activeTrackId === order.id ? null : order.id)}
+                    className="btn btn-primary"
+                    style={{ padding: '8px 18px', fontSize: '0.85rem', display: 'inline-flex', alignItems: 'center', gap: '6px', borderRadius: '8px' }}
+                  >
+                    <i className="fas fa-route"></i>
+                    {activeTrackId === order.id ? 'பின்தொடர்தலை மூடு (Close Track)' : 'ஆர்டரை பின்தொடர (Track Order)'}
+                  </button>
+
+                  {!isCancelled && !isDelivered && (
+                    <button
+                      onClick={() => handleCancelOrder(order.id)}
+                      className="btn btn-secondary"
+                      style={{
+                        padding: '8px 18px',
+                        fontSize: '0.85rem',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        borderRadius: '8px',
+                        backgroundColor: '#fff1f0',
+                        color: '#d9363e',
+                        borderColor: '#ffa39e',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      <i className="fas fa-times-circle"></i> ஆர்டரை ரத்து செய் (Cancel Order)
+                    </button>
+                  )}
+                </div>
+
+                {/* Expanded Live Tracking Timeline Panel */}
+                {activeTrackId === order.id && (
+                  <div style={{ marginTop: '20px', padding: '20px', backgroundColor: '#f9fbf9', borderRadius: '14px', border: '1px solid rgba(45,138,86,0.15)' }}>
+                    <h4 style={{ fontSize: '0.95rem', color: 'var(--primary-dark)', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <i className="fas fa-truck-moving" style={{ color: 'var(--primary-color)' }}></i>
+                      ஆர்டர் நிலவரம் (Live Tracking Status)
+                    </h4>
+
+                    {isCancelled ? (
+                      <div style={{ padding: '12px 16px', background: '#ffebee', borderRadius: '8px', color: '#c62828', fontSize: '0.9rem', fontWeight: '600' }}>
+                        <i className="fas fa-exclamation-circle" style={{ marginRight: '8px' }}></i>
+                        இந்த ஆர்டர் ரத்து செய்யப்பட்டுள்ளது (This order has been cancelled).
+                      </div>
+                    ) : (
+                      <div style={{ display: 'flex', alignItems: 'center', position: 'relative', marginTop: '10px' }}>
+                        {STATUS_STEPS.map((s, i) => {
+                          const done = i <= step;
+                          const active = i === step;
+                          return (
+                            <React.Fragment key={s.key}>
+                              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 'none', zIndex: 1 }}>
+                                <div style={{
+                                  width: '38px', height: '38px', borderRadius: '50%',
+                                  background: done ? 'var(--primary-color)' : '#e8ede9',
+                                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                  boxShadow: active ? '0 0 0 4px rgba(45,138,86,0.25)' : 'none',
+                                  transition: 'all 0.3s'
+                                }}>
+                                  <i className={`fas ${s.icon}`} style={{ color: done ? 'white' : '#aaa', fontSize: '0.85rem' }}></i>
+                                </div>
+                                <span style={{ fontSize: '0.72rem', marginTop: '6px', color: done ? 'var(--primary-color)' : '#aaa', fontWeight: done ? '700' : '400', textAlign: 'center', maxWidth: '75px' }}>
+                                  {s.label}
+                                </span>
+                              </div>
+                              {i < STATUS_STEPS.length - 1 && (
+                                <div style={{ flex: 1, height: '3px', background: i < step ? 'var(--primary-color)' : '#e8ede9', margin: '0 4px', marginBottom: '22px', transition: 'background 0.3s' }}></div>
+                              )}
+                            </React.Fragment>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             );
           })}
