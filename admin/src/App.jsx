@@ -302,6 +302,18 @@ const Admin = () => {
                         <td data-label="தேதி" style={{ fontSize: '0.85rem' }}>{o.date}</td>
                         <td data-label="நிலை">
                           {(() => {
+                            const sStr = (o.status || '').toLowerCase();
+                            const isCancelled = sStr.includes('cancelled') || sStr.includes('ரத்து');
+                            if (isCancelled) {
+                              return (
+                                <span style={{
+                                  padding: '4px 10px', borderRadius: '20px', fontSize: '0.78rem',
+                                  fontWeight: '700', background: '#f8d7da', color: '#dc3545'
+                                }}>
+                                  ரத்து செய்யப்பட்டது (Cancelled)
+                                </span>
+                              );
+                            }
                             const st = ORDER_STATUSES.find(s => o.status.includes(s.value.split(' ')[0])) || ORDER_STATUSES[0];
                             return (
                               <span style={{
@@ -314,44 +326,57 @@ const Admin = () => {
                           })()}
                         </td>
                         <td data-label="செயல்">
-                          <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'nowrap', whiteSpace: 'nowrap' }}>
-                            <select
-                              value={o.status}
-                              onChange={e => updateStatus(o.id, e.target.value)}
-                              style={{
-                                padding: '6px 10px', borderRadius: '8px', fontSize: '0.82rem',
-                                border: '1px solid rgba(30,94,58,0.25)', cursor: 'pointer',
-                                background: 'white', color: 'var(--primary-dark)', fontWeight: '600',
-                                outline: 'none', flexShrink: 0
-                              }}
-                            >
-                              {ORDER_STATUSES.map(s => (
-                                <option key={s.value} value={s.value}>{s.label}</option>
-                              ))}
-                            </select>
-                            {(o.status?.includes('வழங்கப்பட்டது') || o.status?.includes('Delivered')) && (
-                              <button
-                                onClick={() => deleteOrder(o.id, o.status)}
-                                className="remove-btn"
-                                style={{
-                                  padding: '6px 10px',
-                                  borderRadius: '8px',
-                                  display: 'inline-flex',
-                                  alignItems: 'center',
-                                  justifyContent: 'center',
-                                  backgroundColor: '#dc3545',
-                                  color: 'white',
-                                  border: 'none',
-                                  cursor: 'pointer',
-                                  fontSize: '0.82rem',
-                                  flexShrink: 0
-                                }}
-                                title="Delete Order"
-                              >
-                                <i className="fas fa-trash-alt"></i>
-                              </button>
-                            )}
-                          </div>
+                          {(() => {
+                            const sStr = (o.status || '').toLowerCase();
+                            const isCancelled = sStr.includes('cancelled') || sStr.includes('ரத்து');
+                            if (isCancelled) {
+                              return (
+                                <span style={{ fontSize: '0.82rem', fontWeight: '700', color: '#dc3545', display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                                  <i className="fas fa-ban"></i> ரத்து செய்யப்பட்டது (Cancelled)
+                                </span>
+                              );
+                            }
+                            return (
+                              <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'nowrap', whiteSpace: 'nowrap' }}>
+                                <select
+                                  value={o.status}
+                                  onChange={e => updateStatus(o.id, e.target.value)}
+                                  style={{
+                                    padding: '6px 10px', borderRadius: '8px', fontSize: '0.82rem',
+                                    border: '1px solid rgba(30,94,58,0.25)', cursor: 'pointer',
+                                    background: 'white', color: 'var(--primary-dark)', fontWeight: '600',
+                                    outline: 'none', flexShrink: 0
+                                  }}
+                                >
+                                  {ORDER_STATUSES.map(s => (
+                                    <option key={s.value} value={s.value}>{s.label}</option>
+                                  ))}
+                                </select>
+                                {(o.status?.includes('வழங்கப்பட்டது') || o.status?.includes('Delivered')) && (
+                                  <button
+                                    onClick={() => deleteOrder(o.id, o.status)}
+                                    className="remove-btn"
+                                    style={{
+                                      padding: '6px 10px',
+                                      borderRadius: '8px',
+                                      display: 'inline-flex',
+                                      alignItems: 'center',
+                                      justifyContent: 'center',
+                                      backgroundColor: '#dc3545',
+                                      color: 'white',
+                                      border: 'none',
+                                      cursor: 'pointer',
+                                      fontSize: '0.82rem',
+                                      flexShrink: 0
+                                    }}
+                                    title="Delete Order"
+                                  >
+                                    <i className="fas fa-trash-alt"></i>
+                                  </button>
+                                )}
+                              </div>
+                            );
+                          })()}
                         </td>
                       </tr>
                     ))}

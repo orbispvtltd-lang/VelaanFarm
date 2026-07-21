@@ -743,11 +743,15 @@ const Order = () => {
     if (!form.pincode.trim() || !/^[0-9]{6}$/.test(form.pincode.trim())) {
       e.pincode = 'சரியான 6-இலக்க பின்கோடு தேவை';
     } else {
-      // Milk is only deliverable to specific pincodes
-      const MILK_PINCODES = ['638183', '638301'];
-      const hasMilk = cart.some(item => item.category === 'milk');
-      if (hasMilk && !MILK_PINCODES.includes(form.pincode.trim())) {
-        e.pincode = 'உங்கள் பின்கோடுக்கு பால் விநியோகம் இல்லை. வேறு பொருட்களை தேர்வு செய்யவும்.';
+      // Milk and Curd delivery is ONLY available for pincode 638183
+      const hasMilkOrCurd = cart.some(item => {
+        const name = (item.name || '').toLowerCase();
+        const cat = (item.category || '').toLowerCase();
+        return name.includes('milk') || name.includes('பால்') || name.includes('curd') || name.includes('தயிர்') || cat === 'milk' || cat === 'curd';
+      });
+
+      if (hasMilkOrCurd && form.pincode.trim() !== '638183') {
+        e.pincode = 'பசுவின் பால் மற்றும் தயிர் விநியோகம் குமாரபாளையம் (பின்கோடு 638183) பகுதியில் மட்டுமே சாத்தியமாகும்.';
       }
     }
     setErrors(e);
