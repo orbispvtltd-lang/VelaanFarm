@@ -139,16 +139,18 @@ const Admin = () => {
     return s.includes('delivered') || s.includes('வழங்கப்பட்டது') || s.includes('விநியோகிக்கப்பட்டது');
   }).length;
 
-  // --- Pending (Newly Placed) Count ---
-  const pendingCount = orders.filter(o => {
+  // --- Cancelled Count ---
+  const cancelledCount = orders.filter(o => {
     const s = (o.status || '').toLowerCase();
-    return s.includes('pending') || s.includes('பெறப்பட்டது') || s.includes('விநியோகத்தில்');
+    return s.includes('cancelled') || s.includes('ரத்து');
   }).length;
 
-  // --- In Progress (Confirmed / Dispatched) Count ---
-  const inProgressCount = orders.filter(o => {
+  // --- Pending / Active Count ---
+  const pendingCount = orders.filter(o => {
     const s = (o.status || '').toLowerCase();
-    return s.includes('confirm') || s.includes('உறுதி') || s.includes('dispatch') || s.includes('அனுப்பப்பட்டது');
+    const isDelivered = s.includes('delivered') || s.includes('வழங்கப்பட்டது') || s.includes('விநியோகிக்கப்பட்டது');
+    const isCancelled = s.includes('cancelled') || s.includes('ரத்து');
+    return !isDelivered && !isCancelled;
   }).length;
 
   const downloadOrdersCSV = () => {
@@ -250,16 +252,16 @@ const Admin = () => {
                 <div style={{ fontSize: '0.9rem', color: 'var(--text-light)', fontWeight: '600' }}>மொத்த விற்பனை (Delivered Revenue)</div>
               </div>
               <div className="benefit-card" style={{ padding: '20px', textAlign: 'center' }}>
-                <div style={{ fontSize: '2rem', color: '#856404', marginBottom: '5px' }}>{pendingCount}</div>
-                <div style={{ fontSize: '0.9rem', color: 'var(--text-light)', fontWeight: '600' }}>ஆர்டர் பெறப்பட்டது (Pending)</div>
-              </div>
-              <div className="benefit-card" style={{ padding: '20px', textAlign: 'center' }}>
-                <div style={{ fontSize: '2rem', color: '#0d6efd', marginBottom: '5px' }}>{inProgressCount}</div>
-                <div style={{ fontSize: '0.9rem', color: 'var(--text-light)', fontWeight: '600' }}>செயலாக்கத்தில் (In Progress)</div>
+                <div style={{ fontSize: '2rem', color: '#e67e22', marginBottom: '5px' }}>{pendingCount}</div>
+                <div style={{ fontSize: '0.9rem', color: 'var(--text-light)', fontWeight: '600' }}>நிலுவையில் உள்ளவை (Pending)</div>
               </div>
               <div className="benefit-card" style={{ padding: '20px', textAlign: 'center' }}>
                 <div style={{ fontSize: '2rem', color: '#27ae60', marginBottom: '5px' }}>{deliveredCount}</div>
                 <div style={{ fontSize: '0.9rem', color: 'var(--text-light)', fontWeight: '600' }}>வழங்கப்பட்டவை (Delivered)</div>
+              </div>
+              <div className="benefit-card" style={{ padding: '20px', textAlign: 'center' }}>
+                <div style={{ fontSize: '2rem', color: '#e74c3c', marginBottom: '5px' }}>{cancelledCount}</div>
+                <div style={{ fontSize: '0.9rem', color: 'var(--text-light)', fontWeight: '600' }}>ரத்து செய்யப்பட்டது (Cancelled)</div>
               </div>
             </div>
 
