@@ -10,7 +10,7 @@ const LOGO_URL = `${import.meta.env.BASE_URL || '/admin/'}image2.jpeg`;
 const AuthContext = createContext();
 
 // ---------- REDUCERS ----------
-const initialAuth = { 
+const initialAuth = {
   user: JSON.parse(localStorage.getItem('velaan_user')) || null,
   token: localStorage.getItem('velaan_token') || null
 };
@@ -91,11 +91,10 @@ const Admin = () => {
   }, []);
 
   const ORDER_STATUSES = [
-    { value: 'விநியோகத்தில் (Pending)',          label: 'ஆர்டர் பெறப்பட்டது',  color: '#856404', bg: '#fff3cd' },
+    { value: 'விநியோகத்தில் (Pending)', label: 'ஆர்டர் பெறப்பட்டது', color: '#856404', bg: '#fff3cd' },
     { value: 'உறுதிப்படுத்தப்பட்டது (Confirmed)', label: 'உறுதிப்படுத்தப்பட்டது', color: '#0d6efd', bg: '#cfe2ff' },
-    { value: 'அனுப்பப்பட்டது (Dispatched)',       label: 'அனுப்பப்பட்டது',       color: '#6f42c1', bg: '#e8d5ff' },
-    { value: 'வழங்கப்பட்டது (Delivered)',        label: 'வழங்கப்பட்டது',        color: '#198754', bg: '#d1e7dd' },
-    { value: 'ரத்து செய்யப்பட்டது (Cancelled)',   label: 'ரத்து செய்யப்பட்டது',   color: '#dc3545', bg: '#f8d7da' },
+    { value: 'அனுப்பப்பட்டது (Dispatched)', label: 'அனுப்பப்பட்டது', color: '#6f42c1', bg: '#e8d5ff' },
+    { value: 'வழங்கப்பட்டது (Delivered)', label: 'வழங்கப்பட்டது', color: '#198754', bg: '#d1e7dd' },
   ];
 
   const updateStatus = async (id, newStatus) => {
@@ -161,8 +160,8 @@ const Admin = () => {
     }
 
     const headers = [
-      "Order ID", "Date", "Customer Name", "Phone", "Email", 
-      "Address", "City", "District", "Pincode", "Payment Method", 
+      "Order ID", "Date", "Customer Name", "Phone", "Email",
+      "Address", "City", "District", "Pincode", "Payment Method",
       "Total Amount (Rs)", "Status", "Items"
     ];
 
@@ -216,11 +215,11 @@ const Admin = () => {
 
         {/* Tab Selectors */}
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '30px', borderBottom: '1px solid rgba(0,0,0,0.1)', paddingBottom: '10px' }}>
-          <button 
-            onClick={() => setActiveTab('orders')} 
+          <button
+            onClick={() => setActiveTab('orders')}
             className="btn"
-            style={{ 
-              background: activeTab === 'orders' ? 'var(--primary-color)' : 'transparent', 
+            style={{
+              background: activeTab === 'orders' ? 'var(--primary-color)' : 'transparent',
               color: activeTab === 'orders' ? 'white' : 'var(--primary-color)',
               border: activeTab === 'orders' ? 'none' : '1px solid var(--primary-color)',
               padding: '10px 20px',
@@ -229,11 +228,11 @@ const Admin = () => {
           >
             <i className="fas fa-shopping-cart"></i> ஆர்டர்கள் ({orders.length})
           </button>
-          <button 
-            onClick={() => setActiveTab('inquiries')} 
+          <button
+            onClick={() => setActiveTab('inquiries')}
             className="btn"
-            style={{ 
-              background: activeTab === 'inquiries' ? 'var(--primary-color)' : 'transparent', 
+            style={{
+              background: activeTab === 'inquiries' ? 'var(--primary-color)' : 'transparent',
               color: activeTab === 'inquiries' ? 'white' : 'var(--primary-color)',
               border: activeTab === 'inquiries' ? 'none' : '1px solid var(--primary-color)',
               padding: '10px 20px',
@@ -247,7 +246,7 @@ const Admin = () => {
         {activeTab === 'orders' ? (
           <>
             {/* Summary Stats Cards */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '20px', marginBottom: '30px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '20px', marginBottom: '30px' }}>
               <div className="benefit-card" style={{ padding: '20px', textAlign: 'center' }}>
                 <div style={{ fontSize: '2rem', color: 'var(--primary-color)', marginBottom: '5px' }}>₹{totalSales.toLocaleString()}</div>
                 <div style={{ fontSize: '0.9rem', color: 'var(--text-light)', fontWeight: '600' }}>மொத்த விற்பனை (Delivered)</div>
@@ -259,10 +258,6 @@ const Admin = () => {
               <div className="benefit-card" style={{ padding: '20px', textAlign: 'center' }}>
                 <div style={{ fontSize: '2rem', color: '#27ae60', marginBottom: '5px' }}>{deliveredCount}</div>
                 <div style={{ fontSize: '0.9rem', color: 'var(--text-light)', fontWeight: '600' }}>வழங்கப்பட்டவை (Delivered)</div>
-              </div>
-              <div className="benefit-card" style={{ padding: '20px', textAlign: 'center' }}>
-                <div style={{ fontSize: '2rem', color: '#e74c3c', marginBottom: '5px' }}>{cancelledCount}</div>
-                <div style={{ fontSize: '0.9rem', color: 'var(--text-light)', fontWeight: '600' }}>ரத்து செய்யப்பட்டவை (Cancelled)</div>
               </div>
             </div>
 
@@ -414,12 +409,12 @@ const Login = () => {
           }, 1000);
 
           setTimeout(() => {
-            dispatch({ 
-              type: 'LOGIN', 
-              payload: { 
-                user: { id: 1, name: 'Admin', email: 'admin@gmail.com', role: 'admin' }, 
-                token: 'firebase-bypassed-token' 
-              } 
+            dispatch({
+              type: 'LOGIN',
+              payload: {
+                user: { id: 1, name: 'Admin', email: 'admin@gmail.com', role: 'admin' },
+                token: 'firebase-bypassed-token'
+              }
             });
             const from = location.state?.from?.pathname || '/';
             navigate(from, { replace: true });
