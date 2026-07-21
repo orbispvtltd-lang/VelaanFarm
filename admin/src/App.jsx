@@ -160,30 +160,23 @@ const Admin = () => {
     }
 
     const headers = [
-      "Order ID", "Date", "Customer Name", "Phone", "Email",
-      "Address", "City", "District", "Pincode", "Payment Method",
-      "Total Amount (Rs)", "Status", "Items"
+      "Order ID", "Date", "Customer Name", "Phone",
+      "Products", "Address", "Total Amount (Rs)", "Status"
     ];
 
     const csvRows = [headers.join(',')];
 
     orders.forEach(o => {
-      const itemsStr = o.items ? o.items.map(i => `${i.name} (${i.variant}) x${i.qty}`).join('; ') : '';
-      const dateStr = new Date(o.createdAt).toLocaleString('en-IN');
+      const dateStr = o.date || (o.createdAt ? new Date(o.createdAt).toLocaleString('en-IN') : '');
       const row = [
         o.id,
         `"${dateStr}"`,
-        `"${(o.name || '').replace(/"/g, '""')}"`,
+        `"${(o.customer || o.name || '').replace(/"/g, '""')}"`,
         `"${o.phone || ''}"`,
-        `"${(o.email || '').replace(/"/g, '""')}"`,
+        `"${(o.products || '').replace(/"/g, '""')}"`,
         `"${(o.address || '').replace(/"/g, '""')}"`,
-        `"${(o.city || '').replace(/"/g, '""')}"`,
-        `"${(o.district || '').replace(/"/g, '""')}"`,
-        `"${o.pincode || ''}"`,
-        `"${o.paymentMethod === 'cod' ? 'COD' : 'Online'}"`,
         o.total || 0,
-        `"${o.status || ''}"`,
-        `"${itemsStr}"`
+        `"${o.status || ''}"`
       ];
       csvRows.push(row.join(','));
     });
@@ -269,7 +262,17 @@ const Admin = () => {
             <div className="admin-card">
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '10px' }}>
                 <h3>வாடிக்கையாளர் ஆர்டர்களின் பட்டியல் (Order List)</h3>
-                <span style={{ fontSize: '0.9rem', color: 'var(--text-light)' }}>மொத்தம் {orders.length} ஆர்டர்கள்</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+                  <span style={{ fontSize: '0.9rem', color: 'var(--text-light)' }}>மொத்தம் {orders.length} ஆர்டர்கள்</span>
+                  <button
+                    onClick={downloadOrdersCSV}
+                    className="btn btn-primary"
+                    style={{ padding: '6px 14px', fontSize: '0.85rem', display: 'inline-flex', alignItems: 'center', gap: '6px', borderRadius: '8px' }}
+                    title="Download CSV report of all orders"
+                  >
+                    <i className="fas fa-file-csv"></i> CSV தரவிறக்கம் (Download CSV)
+                  </button>
+                </div>
               </div>
               {orders.length === 0 ? (
                 <p style={{ textAlign: 'center', margin: '30px 0', color: 'var(--text-light)' }}>ஆர்டர்கள் எதுவும் இன்னும் சமர்ப்பிக்கப்படவில்லை.</p>
