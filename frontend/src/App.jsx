@@ -758,17 +758,17 @@ const Order = () => {
       // Online Payment via Razorpay
       try {
         const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-        
+
         // 1. Create order on backend
         const res = await fetch(`${apiUrl}/razorpay/create-order`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ amount: total * 100 })
         });
-        
+
         const data = await res.json();
         if (!res.ok) throw new Error(data.message || 'Failed to create order');
-        
+
         // 2. Open Razorpay Checkout
         const options = {
           key: data.key_id || import.meta.env.VITE_RAZORPAY_KEY_ID,
@@ -789,14 +789,14 @@ const Order = () => {
               })
             });
             const verifyData = await verifyRes.json();
-            
+
             if (verifyData.success) {
               // Add to Firebase
               orderData.payment_id = response.razorpay_payment_id;
               orderData.status = 'பணம் செலுத்தப்பட்டது (Paid)';
               const ordersRef = ref(database, 'orders');
               await push(ordersRef, orderData);
-              
+
               cartDispatch({ type: 'CLEAR' });
               navigate('/order-success');
             } else {
@@ -812,13 +812,13 @@ const Order = () => {
             color: "#2b5e2b"
           }
         };
-        
+
         const rzp = new window.Razorpay(options);
-        rzp.on('payment.failed', function (response){
-           alert("Payment Failed: " + response.error.description);
+        rzp.on('payment.failed', function (response) {
+          alert("Payment Failed: " + response.error.description);
         });
         rzp.open();
-        
+
       } catch (err) {
         console.error('Payment Error:', err);
         alert('ஆன்லைன் பேமெண்ட் தொடங்குவதில் பிழை ஏற்பட்டது: ' + err.message);
@@ -886,22 +886,22 @@ const Order = () => {
                 <label style={{ display: 'block', marginBottom: '10px' }}>பணம் செலுத்தும் முறை (Payment Method)</label>
                 <div style={{ display: 'flex', gap: '20px' }}>
                   <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-                    <input 
-                      type="radio" 
-                      name="payment" 
-                      value="online" 
-                      checked={paymentMethod === 'online'} 
-                      onChange={(e) => setPaymentMethod(e.target.value)} 
+                    <input
+                      type="radio"
+                      name="payment"
+                      value="online"
+                      checked={paymentMethod === 'online'}
+                      onChange={(e) => setPaymentMethod(e.target.value)}
                     />
                     <span>ஆன்லைன் பேமெண்ட் (Online)</span>
                   </label>
                   <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}>
-                    <input 
-                      type="radio" 
-                      name="payment" 
-                      value="cod" 
-                      checked={paymentMethod === 'cod'} 
-                      onChange={(e) => setPaymentMethod(e.target.value)} 
+                    <input
+                      type="radio"
+                      name="payment"
+                      value="cod"
+                      checked={paymentMethod === 'cod'}
+                      onChange={(e) => setPaymentMethod(e.target.value)}
                     />
                     <span>கேஷ் ஆன் டெலிவரி (COD)</span>
                   </label>
@@ -1276,9 +1276,9 @@ const ForgotPassword = () => {
     } catch (err) {
       console.error('Password reset error:', err);
       const errorMap = {
-        'auth/user-not-found':       'இந்த மின்னஞ்சல் முகவரிக்கு எந்த கணக்கும் இல்லை. (No account found for this email.)',
-        'auth/invalid-email':        'மின்னஞ்சல் முகவரி தவறானது. (Invalid email address.)',
-        'auth/too-many-requests':    'மிகவும் அதிகமான முயற்சிகள். சிறிது நேரம் கழித்து மீண்டும் முயலவும். (Too many requests. Please try again later.)',
+        'auth/user-not-found': 'இந்த மின்னஞ்சல் முகவரிக்கு எந்த கணக்கும் இல்லை. (No account found for this email.)',
+        'auth/invalid-email': 'மின்னஞ்சல் முகவரி தவறானது. (Invalid email address.)',
+        'auth/too-many-requests': 'மிகவும் அதிகமான முயற்சிகள். சிறிது நேரம் கழித்து மீண்டும் முயலவும். (Too many requests. Please try again later.)',
         'auth/network-request-failed': 'இணைய இணைப்பு பிழை. (Network error. Check your connection.)',
       };
       setErrorMsg(errorMap[err.code] || `பிழை ஏற்பட்டது: ${err.code}`);
@@ -1318,7 +1318,7 @@ const ForgotPassword = () => {
               fontSize: '0.85rem', color: '#7a5200', textAlign: 'left', lineHeight: '1.7'
             }}>
               <i className="fas fa-info-circle"></i>&nbsp;
-              மின்னஞ்சல் வரவில்லை என்றால், உங்களது <strong>Spam / Junk</strong> ஃபோல்டரை சரிபார்க்கவும்.<br/>
+              மின்னஞ்சல் வரவில்லை என்றால், உங்களது <strong>Spam / Junk</strong> ஃபோல்டரை சரிபார்க்கவும்.<br />
               (If you don't receive it, please check your Spam / Junk folder.)
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -1352,7 +1352,7 @@ const ForgotPassword = () => {
               </div>
               <h2 className="form-title" style={{ marginBottom: '6px' }}>கடவுச்சொல் மீட்பு</h2>
               <p style={{ color: 'var(--text-light)', fontSize: '0.92rem' }}>
-                உங்கள் மின்னஞ்சல் முகவரியை உள்ளிடவும். மீட்டமைப்பு இணைப்பு அனுப்பப்படும்.<br/>
+                உங்கள் மின்னஞ்சல் முகவரியை உள்ளிடவும். மீட்டமைப்பு இணைப்பு அனுப்பப்படும்.<br />
                 (Enter your email to receive a password reset link.)
               </p>
             </div>
@@ -1419,14 +1419,14 @@ const OrderSuccess = () => {
         }}>
           <i className="fas fa-check" style={{ fontSize: '2.5rem', color: 'white' }}></i>
         </div>
-        
+
         <h2 style={{ fontSize: '1.6rem', color: 'var(--primary-dark)', marginBottom: '8px', fontWeight: '700' }}>
           ஆர்டர் வெற்றிகரமாக பதிவு செய்யப்பட்டது!
         </h2>
         <h3 style={{ fontSize: '1.2rem', color: 'var(--text-color)', marginBottom: '16px' }}>
           Order Placed Successfully!
         </h3>
-        
+
         <p style={{ color: 'var(--text-light)', fontSize: '1rem', marginBottom: '24px', lineHeight: '1.6' }}>
           எங்கள் வேளாண் பண்ணையில் வாங்கியமைக்கு மிக்க நன்றி. உங்கள் ஆர்டர் விரைவில் விநியோகிக்கப்படும்.
           <br /><br />
@@ -1438,8 +1438,8 @@ const OrderSuccess = () => {
           borderRadius: '10px', padding: '15px', marginBottom: '30px',
           fontSize: '0.95rem', color: 'var(--primary-dark)'
         }}>
-          <i className="fas fa-headset"></i> ஏதேனும் சந்தேகங்களுக்கு தொடர்பு கொள்ளவும்: 
-          <br/><strong>9342632853</strong>
+          <i className="fas fa-headset"></i> ஏதேனும் சந்தேகங்களுக்கு தொடர்பு கொள்ளவும்:
+          <br /><strong>9342632853</strong>
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
@@ -1472,7 +1472,7 @@ const Login = () => {
       try {
         const userCredential = await signInWithEmailAndPassword(auth, email, pass);
         const user = userCredential.user;
-        
+
         // Fetch user role/name from Realtime DB
         const userRef = ref(database, 'users/' + user.uid);
         const snapshot = await get(userRef);
@@ -1588,9 +1588,9 @@ const Signup = () => {
       } catch (err) {
         console.error('Signup error:', err);
         if (err.code === 'auth/email-already-in-use') {
-           alert('இந்த மின்னஞ்சலில் ஏற்கனவே கணக்கு உள்ளது!');
+          alert('இந்த மின்னஞ்சலில் ஏற்கனவே கணக்கு உள்ளது!');
         } else {
-           alert('கணக்கு உருவாக்குவதில் பிழை ஏற்பட்டது. (கடவுச்சொல் குறைந்தது 6 எழுத்துகள் இருக்க வேண்டும்)');
+          alert('கணக்கு உருவாக்குவதில் பிழை ஏற்பட்டது. (கடவுச்சொல் குறைந்தது 6 எழுத்துகள் இருக்க வேண்டும்)');
         }
       }
     } else {
@@ -1700,172 +1700,172 @@ const App = () => {
     <AuthContext.Provider value={authContextValue}>
       <CartContext.Provider value={cartContextValue}>
         <ToastContext.Provider value={showToast}>
-        <BrowserRouter>
+          <BrowserRouter>
 
-          {/* ===== ENTRY SPLASH SCREEN ===== */}
-          {entrySplash && (
-            <div
-              className="water-loader-container"
-              style={{ opacity: splashFading ? 0 : 1, transition: 'opacity 0.5s ease' }}
-            >
-              <div className="water-logo-wrapper">
-                <img src={LOGO_URL} alt="Velaan Farm Logo" className="water-logo-img" />
-                <div className="water-fill" style={{ height: `${entryProgress}%` }}>
-                  <img src={LOGO_URL} alt="Velaan Farm Logo" className="water-fill-logo-img" />
+            {/* ===== ENTRY SPLASH SCREEN ===== */}
+            {entrySplash && (
+              <div
+                className="water-loader-container"
+                style={{ opacity: splashFading ? 0 : 1, transition: 'opacity 0.5s ease' }}
+              >
+                <div className="water-logo-wrapper">
+                  <img src={LOGO_URL} alt="Velaan Farm Logo" className="water-logo-img" />
+                  <div className="water-fill" style={{ height: `${entryProgress}%` }}>
+                    <img src={LOGO_URL} alt="Velaan Farm Logo" className="water-fill-logo-img" />
+                  </div>
                 </div>
-              </div>
-              <div className="water-loader-text" style={{ marginTop: '30px' }}>
-                <h3>வேளாண் பண்ணை</h3>
-                <p>தூய்மை • பாரம்பரியம் • நம்பகம்</p>
-              </div>
-            </div>
-          )}
-
-          <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-
-            {/* Header/Navbar */}
-            <nav className="navbar">
-              <div className="nav-container">
-                <Link to="/" onClick={closeMenu} className="nav-logo">
-                  <img src={LOGO_URL} alt="Velaan Farm Logo" className="nav-logo-img" />
-                  <span className="nav-brand-text">வேளாண் பண்ணை</span>
-                </Link>
-
-                <ul className={`nav-links ${menuActive ? 'active' : ''}`}>
-                  <li><NavLink to="/" onClick={closeMenu} className={({isActive}) => isActive ? 'active-nav' : ''}>முகப்பு (Home)</NavLink></li>
-                  <li><NavLink to="/about" onClick={closeMenu} className={({isActive}) => isActive ? 'active-nav' : ''}>பற்றி (About)</NavLink></li>
-                  <li><NavLink to="/products" onClick={closeMenu} className={({isActive}) => isActive ? 'active-nav' : ''}>தயாரிப்புகள் (Products)</NavLink></li>
-                  <li><NavLink to="/delivery" onClick={closeMenu} className={({isActive}) => isActive ? 'active-nav' : ''}>விநியோகம் (Delivery)</NavLink></li>
-                  <li><NavLink to="/contact" onClick={closeMenu} className={({isActive}) => isActive ? 'active-nav' : ''}>தொடர்புக்கு (Contact)</NavLink></li>
-                  {auth.user && (
-                    <li><NavLink to="/my-orders" onClick={closeMenu} className={({isActive}) => isActive ? 'active-nav' : ''}>என் ஆர்டர்கள் (MyOrders)</NavLink></li>
-                  )}
-
-
-                  {cart.length > 0 && (
-                    <li>
-                      <Link to="/cart" onClick={closeMenu} style={{ display: 'flex', alignItems: 'center' }}>
-                        <i className="fas fa-shopping-cart"></i>
-                        <span className="cart-badge">{cart.reduce((sum, i) => sum + i.qty, 0)}</span>
-                      </Link>
-                    </li>
-                  )}
-
-                  {auth.user ? (
-                    <li style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <span style={{ fontSize: '0.9rem', fontWeight: '600', color: 'var(--primary-color)' }}>
-                        👤 {auth.user.name}
-                      </span>
-                      <button
-                        onClick={() => { authDispatch({ type: 'LOGOUT' }); closeMenu(); }}
-                        className="btn btn-secondary"
-                        style={{ padding: '6px 12px', fontSize: '0.8rem' }}
-                      >
-                        Logout
-                      </button>
-                    </li>
-                  ) : (
-                    <li>
-                      <Link to="/login" onClick={closeMenu} className="btn btn-primary" style={{ padding: '8px 18px', fontSize: '0.9rem', color: 'white' }}>
-                        Login
-                      </Link>
-                    </li>
-                  )}
-                </ul>
-
-                <a href="https://wa.me/message/4HI3RHBC6YMDB1" target="_blank" rel="noopener noreferrer" className="nav-cta-btn" title="வாட்ஸ்அப் மூலம் ஆர்டர் செய்ய">
-                  <i className="fab fa-whatsapp"></i>
-                </a>
-
-                <div
-                  className={`menu-toggle ${menuActive ? 'is-active' : ''}`}
-                  id="mobile-menu"
-                  onClick={() => setMenuActive(!menuActive)}
-                >
-                  <span className="bar"></span>
-                  <span className="bar"></span>
-                  <span className="bar"></span>
-                </div>
-              </div>
-            </nav>
-
-            {/* Routes Content */}
-            <main style={{ flexGrow: 1 }}>
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/about" element={<About />} />
-                <Route path="/products" element={<Products />} />
-                <Route path="/cart" element={<CartPage />} />
-                <Route path="/order" element={<Protected><Order /></Protected>} />
-                <Route path="/order-success" element={<OrderSuccess />} />
-                <Route path="/my-orders" element={<Protected><MyOrders /></Protected>} />
-                <Route path="/delivery" element={<DeliveryInfo />} />
-                <Route path="/contact" element={<Contact />} />
-
-                <Route path="/login" element={<Login />} />
-                <Route path="/signup" element={<Signup />} />
-                <Route path="/forgot-password" element={<ForgotPassword />} />
-                {/* Fallback to Home */}
-                <Route path="*" element={<Navigate to="/" replace />} />
-              </Routes>
-            </main>
-
-            {/* Mobile Bottom Navigation */}
-            <div className="mobile-bottom-nav">
-              <NavLink to="/" className={({isActive}) => isActive ? 'bottom-nav-item active-nav' : 'bottom-nav-item'}>
-                <i className="fas fa-home"></i>
-                <span>Home</span>
-              </NavLink>
-              <NavLink to="/products" className={({isActive}) => isActive ? 'bottom-nav-item active-nav' : 'bottom-nav-item'}>
-                <i className="fas fa-th-large"></i>
-                <span>Products</span>
-              </NavLink>
-              <NavLink to={auth.user ? "/my-orders" : "/login"} className={({isActive}) => isActive ? 'bottom-nav-item active-nav' : 'bottom-nav-item'}>
-                <i className="fas fa-user"></i>
-                <span>Account</span>
-              </NavLink>
-              <NavLink to="/cart" className={({isActive}) => isActive ? 'bottom-nav-item active-nav' : 'bottom-nav-item'} style={{ position: 'relative' }}>
-                <i className="fas fa-shopping-cart"></i>
-                <span>Cart</span>
-                {cart.length > 0 && (
-                  <span className="cart-badge" style={{ position: 'absolute', top: '-5px', right: '5px', fontSize: '0.65rem', width: '18px', height: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', backgroundColor: 'var(--accent-color)', color: 'white' }}>
-                    {cart.reduce((sum, i) => sum + i.qty, 0)}
-                  </span>
-                )}
-              </NavLink>
-            </div>
-
-            {/* Footer */}
-            <footer>
-              <div className="footer-container">
-                <div className="footer-brand">
-                  <img src={LOGO_URL} alt="Velaan Farm Logo" className="footer-logo" />
+                <div className="water-loader-text" style={{ marginTop: '30px' }}>
                   <h3>வேளாண் பண்ணை</h3>
-                  <p>100% தூய்மையான பண்ணை பசுவின் பால் மற்றும் நெய்</p>
-                  <p style={{ fontSize: '0.9rem', marginTop: '5px', opacity: 0.7 }}>5f11/1 Manimegalai street, Kumarapalayam, Namakkal, Pincode - 638183</p>
-                  <p style={{ fontSize: '0.9rem', opacity: 0.7 }}>தொலைபேசி: +91 93426 32853</p>
+                  <p>தூய்மை • பாரம்பரியம் • நம்பகம்</p>
                 </div>
-                <div className="footer-copyright">
-                  <p>© 2026 Orbis Freelancing. All Rights Reserved. Orbis Freelancing specializes in AI Development, Full-Stack Web Solutions, UI/UX Design, Automation, Branding, and Digital Growth Services. Crafted with cutting-edge technologies for exceptional user experiences across all platforms.</p>
-                </div>
-              </div>
-            </footer>
-
-            {/* ===== ADD-TO-CART TOAST NOTIFICATION ===== */}
-            {toast.visible && (
-              <div className={`cart-toast${toast.exiting ? ' cart-toast--exit' : ''}`}>
-                <span className="cart-toast__icon"><i className="fas fa-check-circle"></i></span>
-                <span className="cart-toast__msg">
-                  <strong>{toast.name}</strong> ({toast.variant}) கூடையில் சேர்க்கப்பட்டது!
-                </span>
-                <Link to="/cart" className="cart-toast__link">
-                  <i className="fas fa-shopping-cart"></i> கூடையை பார்க்க (View Cart)
-                </Link>
               </div>
             )}
 
-          </div>
-        </BrowserRouter>
+            <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+
+              {/* Header/Navbar */}
+              <nav className="navbar">
+                <div className="nav-container">
+                  <Link to="/" onClick={closeMenu} className="nav-logo">
+                    <img src={LOGO_URL} alt="Velaan Farm Logo" className="nav-logo-img" />
+                    <span className="nav-brand-text">வேளாண் பண்ணை</span>
+                  </Link>
+
+                  <ul className={`nav-links ${menuActive ? 'active' : ''}`}>
+                    <li><NavLink to="/" onClick={closeMenu} className={({ isActive }) => isActive ? 'active-nav' : ''}>முகப்பு (Home)</NavLink></li>
+                    <li><NavLink to="/about" onClick={closeMenu} className={({ isActive }) => isActive ? 'active-nav' : ''}>பற்றி (About)</NavLink></li>
+                    <li><NavLink to="/products" onClick={closeMenu} className={({ isActive }) => isActive ? 'active-nav' : ''}>தயாரிப்புகள் (Products)</NavLink></li>
+                    <li><NavLink to="/delivery" onClick={closeMenu} className={({ isActive }) => isActive ? 'active-nav' : ''}>விநியோகம் (Delivery)</NavLink></li>
+                    <li><NavLink to="/contact" onClick={closeMenu} className={({ isActive }) => isActive ? 'active-nav' : ''}>தொடர்புக்கு (Contact)</NavLink></li>
+                    {auth.user && (
+                      <li><NavLink to="/my-orders" onClick={closeMenu} className={({ isActive }) => isActive ? 'active-nav' : ''}>என் ஆர்டர்கள் (MyOrders)</NavLink></li>
+                    )}
+
+
+                    {cart.length > 0 && (
+                      <li>
+                        <Link to="/cart" onClick={closeMenu} style={{ display: 'flex', alignItems: 'center' }}>
+                          <i className="fas fa-shopping-cart"></i>
+                          <span className="cart-badge">{cart.reduce((sum, i) => sum + i.qty, 0)}</span>
+                        </Link>
+                      </li>
+                    )}
+
+                    {auth.user ? (
+                      <li style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <span style={{ fontSize: '0.9rem', fontWeight: '600', color: 'var(--primary-color)' }}>
+                          👤 {auth.user.name}
+                        </span>
+                        <button
+                          onClick={() => { authDispatch({ type: 'LOGOUT' }); closeMenu(); }}
+                          className="btn btn-secondary"
+                          style={{ padding: '6px 12px', fontSize: '0.8rem' }}
+                        >
+                          Logout
+                        </button>
+                      </li>
+                    ) : (
+                      <li>
+                        <Link to="/login" onClick={closeMenu} className="btn btn-primary" style={{ padding: '8px 18px', fontSize: '0.9rem', color: 'white' }}>
+                          Login
+                        </Link>
+                      </li>
+                    )}
+                  </ul>
+
+                  <a href="https://wa.me/message/4HI3RHBC6YMDB1" target="_blank" rel="noopener noreferrer" className="nav-cta-btn" title="வாட்ஸ்அப் மூலம் ஆர்டர் செய்ய">
+                    <i className="fab fa-whatsapp"></i>
+                  </a>
+
+                  <div
+                    className={`menu-toggle ${menuActive ? 'is-active' : ''}`}
+                    id="mobile-menu"
+                    onClick={() => setMenuActive(!menuActive)}
+                  >
+                    <span className="bar"></span>
+                    <span className="bar"></span>
+                    <span className="bar"></span>
+                  </div>
+                </div>
+              </nav>
+
+              {/* Routes Content */}
+              <main style={{ flexGrow: 1 }}>
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/about" element={<About />} />
+                  <Route path="/products" element={<Products />} />
+                  <Route path="/cart" element={<CartPage />} />
+                  <Route path="/order" element={<Protected><Order /></Protected>} />
+                  <Route path="/order-success" element={<OrderSuccess />} />
+                  <Route path="/my-orders" element={<Protected><MyOrders /></Protected>} />
+                  <Route path="/delivery" element={<DeliveryInfo />} />
+                  <Route path="/contact" element={<Contact />} />
+
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/signup" element={<Signup />} />
+                  <Route path="/forgot-password" element={<ForgotPassword />} />
+                  {/* Fallback to Home */}
+                  <Route path="*" element={<Navigate to="/" replace />} />
+                </Routes>
+              </main>
+
+              {/* Mobile Bottom Navigation */}
+              <div className="mobile-bottom-nav">
+                <NavLink to="/" className={({ isActive }) => isActive ? 'bottom-nav-item active-nav' : 'bottom-nav-item'}>
+                  <i className="fas fa-home"></i>
+                  <span>Home</span>
+                </NavLink>
+                <NavLink to="/products" className={({ isActive }) => isActive ? 'bottom-nav-item active-nav' : 'bottom-nav-item'}>
+                  <i className="fas fa-th-large"></i>
+                  <span>Products</span>
+                </NavLink>
+                <NavLink to={auth.user ? "/my-orders" : "/login"} className={({ isActive }) => isActive ? 'bottom-nav-item active-nav' : 'bottom-nav-item'}>
+                  <i className="fas fa-user"></i>
+                  <span>Account</span>
+                </NavLink>
+                <NavLink to="/cart" className={({ isActive }) => isActive ? 'bottom-nav-item active-nav' : 'bottom-nav-item'} style={{ position: 'relative' }}>
+                  <i className="fas fa-shopping-cart"></i>
+                  <span>Cart</span>
+                  {cart.length > 0 && (
+                    <span className="cart-badge" style={{ position: 'absolute', top: '-5px', right: '5px', fontSize: '0.65rem', width: '18px', height: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', backgroundColor: 'var(--accent-color)', color: 'white' }}>
+                      {cart.reduce((sum, i) => sum + i.qty, 0)}
+                    </span>
+                  )}
+                </NavLink>
+              </div>
+
+              {/* Footer */}
+              <footer>
+                <div className="footer-container">
+                  <div className="footer-brand">
+                    <img src={LOGO_URL} alt="Velaan Farm Logo" className="footer-logo" />
+                    <h3>வேளாண் பண்ணை</h3>
+                    <p>100% தூய்மையான பண்ணை பசுவின் பால் மற்றும் நெய்</p>
+                    <p style={{ fontSize: '0.9rem', marginTop: '5px', opacity: 0.7 }}>5f11/1 Manimegalai street, Kumarapalayam, Namakkal, Pincode - 638183</p>
+                    <p style={{ fontSize: '0.9rem', opacity: 0.7 }}>தொலைபேசி: +91 93426 32853</p>
+                  </div>
+                  <div className="footer-copyright">
+                    <p>© 2026 <a href="https://orbisportfolio.vercel.app">Orbis</a> All Rights Reserved.</p>
+                  </div>
+                </div>
+              </footer>
+
+              {/* ===== ADD-TO-CART TOAST NOTIFICATION ===== */}
+              {toast.visible && (
+                <div className={`cart-toast${toast.exiting ? ' cart-toast--exit' : ''}`}>
+                  <span className="cart-toast__icon"><i className="fas fa-check-circle"></i></span>
+                  <span className="cart-toast__msg">
+                    <strong>{toast.name}</strong> ({toast.variant}) கூடையில் சேர்க்கப்பட்டது!
+                  </span>
+                  <Link to="/cart" className="cart-toast__link">
+                    <i className="fas fa-shopping-cart"></i> கூடையை பார்க்க (View Cart)
+                  </Link>
+                </div>
+              )}
+
+            </div>
+          </BrowserRouter>
         </ToastContext.Provider>
       </CartContext.Provider>
     </AuthContext.Provider>
