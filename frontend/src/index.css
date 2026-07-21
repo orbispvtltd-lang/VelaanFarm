@@ -937,7 +937,18 @@ footer {
 
 .footer-copyright p {
     font-size: 0.9rem;
-    opacity: 0.6;
+    opacity: 0.8;
+}
+
+.footer-copyright a {
+    color: #e2ab3b;
+    text-decoration: underline;
+    font-weight: 600;
+    transition: var(--transition);
+}
+
+.footer-copyright a:hover {
+    color: #ffffff;
 }
 
 /* Responsive adjustments */
@@ -1619,7 +1630,7 @@ footer {
 
     /* Footer */
     footer {
-        padding: 40px 4% 20px 4%;
+        padding: 40px 4% 95px 4%;
     }
 
     /* Water loader smallest size */
@@ -1719,6 +1730,10 @@ footer {
     }
     
     main {
-        padding-bottom: 70px;
+        padding-bottom: 0;
+    }
+
+    footer {
+        padding-bottom: calc(90px + env(safe-area-inset-bottom, 0px));
     }
 }
