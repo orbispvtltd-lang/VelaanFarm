@@ -68,7 +68,7 @@ const cartReducer = (state, action) => {
   }
 };
 
-const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
+const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
 
 const getInitialAuth = () => {
   try {
@@ -78,7 +78,7 @@ const getInitialAuth = () => {
 
     if (userStr && loginTimeStr) {
       const loginTime = Number(loginTimeStr);
-      if (Date.now() - loginTime < SEVEN_DAYS_MS) {
+      if (Date.now() - loginTime < THIRTY_DAYS_MS) {
         return { user: JSON.parse(userStr), token: token || null };
       }
     }
@@ -113,7 +113,7 @@ const authReducer = (state, action) => {
 const Protected = ({ children }) => {
   const { state: auth } = useContext(AuthContext);
   if (!auth.user) {
-    return <Navigate to="/signup" replace />;
+    return <Navigate to="/login" replace />;
   }
   return children;
 };
