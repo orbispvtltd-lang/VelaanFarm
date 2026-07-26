@@ -416,7 +416,7 @@ const Admin = () => {
 
 // 2. AUTHENTICATION (LOGIN)
 const Login = () => {
-  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const [pass, setPass] = useState('');
   const [showSplash, setShowSplash] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -426,9 +426,9 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    if (email && pass) {
+    if (phone && pass) {
       try {
-        if (email === 'admin@gmail.com' && pass === 'admin@123') {
+        if (phone === '9999999999' && pass === 'admin@123') {
           setShowSplash(true);
 
           let currentProgress = 0;
@@ -452,14 +452,14 @@ const Login = () => {
             navigate(from, { replace: true });
           }, 5000);
         } else {
-          alert('மின்னஞ்சல் அல்லது கடவுச்சொல் தவறானது! (Invalid email or password)');
+          alert('தொலைபேசி எண் அல்லது கடவுச்சொல் தவறானது! (Invalid phone number or password)');
         }
       } catch (err) {
         console.error('Login error:', err);
         alert('உள்நுழைவதில் பிழை ஏற்பட்டது.');
       }
     } else {
-      alert('மின்னஞ்சல் மற்றும் கடவுச்சொல்லை உள்ளிடவும்.');
+      alert('தொலைபேசி எண் மற்றும் கடவுச்சொல்லை உள்ளிடவும்.');
     }
   };
 
@@ -480,8 +480,8 @@ const Login = () => {
         <h2 className="form-title">நிர்வாக உள்நுழைவு (Admin Login)</h2>
         <form onSubmit={handleLogin}>
           <div className="form-group">
-            <label>மின்னஞ்சல் (Email)</label>
-            <input type="email" placeholder="admin@velaanfarm.in" value={email} onChange={e => setEmail(e.target.value)} required />
+            <label>தொலைபேசி எண் (Phone Number)</label>
+            <input type="tel" placeholder="9999999999" value={phone} onChange={e => setPhone(e.target.value)} required autoComplete="off" />
           </div>
           <div className="form-group">
             <label>கடவுச்சொல் (Password)</label>

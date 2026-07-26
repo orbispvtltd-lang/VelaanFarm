@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext, createContext, useReducer, useMemo } from 'react';
 import { BrowserRouter, Routes, Route, Link, NavLink, useNavigate, useParams, Navigate, useLocation } from 'react-router-dom';
-import { ref, push, get, child, set, update } from 'firebase/database';
+import { ref, push, get, child, set, update, query, orderByChild, equalTo } from 'firebase/database';
 import { database, auth } from './firebase';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
 
@@ -1575,7 +1575,7 @@ const OrderSuccess = () => {
 
 // 9. AUTHENTICATION (LOGIN / SIGNUP)
 const Login = () => {
-  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const [pass, setPass] = useState('');
   const [showSplash, setShowSplash] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -1585,15 +1585,29 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    if (email && pass) {
+    if (phone && pass) {
       try {
-        const userCredential = await signInWithEmailAndPassword(auth, email, pass);
+        // Find email by phone number
+        const usersRef = ref(database, 'users');
+        const q = query(usersRef, orderByChild('phone'), equalTo(phone));
+        const phoneSnapshot = await get(q);
+        
+        let loginEmail = null;
+        if (phoneSnapshot.exists()) {
+          const userData = phoneSnapshot.val();
+          const userId = Object.keys(userData)[0];
+          loginEmail = userData[userId].email;
+        } else {
+          throw { code: 'auth/user-not-found-by-phone' };
+        }
+
+        const userCredential = await signInWithEmailAndPassword(auth, loginEmail, pass);
         const user = userCredential.user;
 
         // Fetch user role/name from Realtime DB
         const userRef = ref(database, 'users/' + user.uid);
         const snapshot = await get(userRef);
-        let foundUser = { id: user.uid, name: email.split('@')[0], email: user.email, role: 'user' };
+        let foundUser = { id: user.uid, name: loginEmail.split('@')[0], email: user.email, role: 'user' };
         if (snapshot.exists()) {
           foundUser = { id: user.uid, ...snapshot.val() };
         }
@@ -1616,10 +1630,14 @@ const Login = () => {
         }, 5000);
       } catch (err) {
         console.error('Login error:', err);
-        alert('மின்னஞ்சல் அல்லது கடவுச்சொல் தவறானது! (Invalid email or password)');
+        if (err.code === 'auth/user-not-found-by-phone') {
+          alert('இந்த தொலைபேசி எண்ணில் கணக்கு இல்லை! (Account not found for this phone number)');
+        } else {
+          alert('தொலைபேசி எண் அல்லது கடவுச்சொல் தவறானது! (Invalid phone number or password)');
+        }
       }
     } else {
-      alert('மின்னஞ்சல் மற்றும் கடவுச்சொல்லை உள்ளிடவும்.');
+      alert('தொலைபேசி எண் மற்றும் கடவுச்சொல்லை உள்ளிடவும். (Enter phone number and password)');
     }
   };
 
@@ -1640,8 +1658,8 @@ const Login = () => {
         <h2 className="form-title">உள்நுழைக (Login)</h2>
         <form onSubmit={handleLogin} autoComplete="off">
           <div className="form-group">
-            <label>மின்னஞ்சல் (Email)</label>
-            <input type="email" placeholder="example@gmail.com" value={email} onChange={e => setEmail(e.target.value)} required autoComplete="off" />
+            <label>தொலைபேசி எண் (Phone Number)</label>
+            <input type="tel" placeholder="9876543210" value={phone} onChange={e => setPhone(e.target.value)} required autoComplete="tel" />
           </div>
           <div className="form-group">
             <label>கடவுச்சொல் (Password)</label>
@@ -1664,6 +1682,7 @@ const Login = () => {
 
 const Signup = () => {
   const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [pass, setPass] = useState('');
   const [showSplash, setShowSplash] = useState(false);
@@ -1673,7 +1692,7 @@ const Signup = () => {
 
   const handleSignup = async (e) => {
     e.preventDefault();
-    if (name && email && pass) {
+    if (name && phone && email && pass) {
       try {
         const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
         const user = userCredential.user;
@@ -1681,11 +1700,12 @@ const Signup = () => {
         const newUserRef = ref(database, 'users/' + user.uid);
         await set(newUserRef, {
           name: name,
+          phone: phone,
           email: email,
           role: 'user'
         });
 
-        const newUser = { id: user.uid, name: name, email, role: 'user' };
+        const newUser = { id: user.uid, name: name, phone: phone, email, role: 'user' };
 
         setShowSplash(true);
 
@@ -1734,6 +1754,10 @@ const Signup = () => {
           <div className="form-group">
             <label>பெயர் (Name)</label>
             <input type="text" placeholder="Your Name" value={name} onChange={e => setName(e.target.value)} required autoComplete="name" />
+          </div>
+          <div className="form-group">
+            <label>தொலைபேசி எண் (Phone)</label>
+            <input type="tel" placeholder="9876543210" value={phone} onChange={e => setPhone(e.target.value)} required autoComplete="tel" />
           </div>
           <div className="form-group">
             <label>மின்னஞ்சல் (Email)</label>
