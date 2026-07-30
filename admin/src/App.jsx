@@ -428,7 +428,7 @@ const Login = () => {
     e.preventDefault();
     if (phone && pass) {
       try {
-        if (phone === '9342632853' && pass === 'admin123') {
+        if (phone === '9342632853' && pass === '18-06-2024@2026') {
           setShowSplash(true);
 
           let currentProgress = 0;
