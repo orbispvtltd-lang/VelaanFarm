@@ -1987,7 +1987,7 @@ const App = () => {
                     <p style={{ fontSize: '0.9rem', opacity: 0.7 }}>தொலைபேசி: +91 93426 32853</p>
                   </div>
                   <div className="footer-copyright">
-                    <p>© 2026 <a href="https://orbisportfolio.vercel.app">Orbis</a> All Rights Reserved.</p>
+                    <p>© 2026 <a href="https://portfolio-orbis.vercel.app">Orbis</a> All Rights Reserved.</p>
                   </div>
                 </div>
               </footer>
